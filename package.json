@@ -1,0 +1,28 @@
+{
+  "name": "spillutvikling",
+  "private": true,
+  "version": "0.0.1",
+  "description": "",
+  "type": "module",
+  "author": "",
+  "license": "",
+  "scripts": {
+    "build": "sass ./src/scss/styles.scss ./dist/css/styles.css",
+    "watch": "sass ./src/scss/styles.scss ./dist/css/styles.css --watch",
+    "format": "prettier -w src/**/*.js",
+    "lint": "eslint src/**/*.js",
+    "lint-fix": "eslint src/**/*.js --cache --fix",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/griphaugland/spillutvikling.git"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.1.1",
+    "sass": "^1.69.7"
+  }
+}
