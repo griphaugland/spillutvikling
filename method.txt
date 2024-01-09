@@ -1,0 +1,11 @@
+    drawTowers(towers) {
+        towers.forEach(ele => {
+            this.ctx.fillRect(ele.posX, ele.posY, ele.height, ele.width);
+        })
+    }
+    drawEnemies(enemies) {
+        enemies.forEach(ele => {
+            this.ctx.fillStyle = "red"
+            this.ctx.fillRect(ele.posX, ele.posY, ele.height, ele.width);
+        })
+    }
