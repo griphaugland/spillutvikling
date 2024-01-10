@@ -13,23 +13,23 @@ let roundStart = true;
 // prettier-ignore
 let map = [
     0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 3, 
+    0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 
+    0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 
+    0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 
     0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
-    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
-    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
-    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
-    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
-    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
-    0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 
+    0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 
+    0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 
+    0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 
+    0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
 ];
 
 enemies.push(
   new Enemy(
-    100,
-    0,
+    units.boxWidth * 2,
+    units.boxWidth * 0,
     units.boxWidth,
     units.boxHeight,
     200,
@@ -41,73 +41,77 @@ enemies.push(
 );
 console.log(enemies);
 
-function changeDirection(enemy) {
+/* 
+SJEKK TILEN (RETURNERER TRUE / FALSE OM TILEN KAN GÅS PÅ):
+SJEKK TILEN UNDER: checkDirection(enemy.posX, enemy.posY + units.boxHeight, true)
+SJEKK TILEN OVER: checkDirection(enemy.posX, enemy.posY - units.boxHeight, true)
+SJEKK TILEN TIL VENSTRE: checkDirection(enemy.posX - units.boxWidth, enemy.posY, true)
+SJEKK TILEN TIL HØYRE: checkDirection(enemy.posX + units.boxWidth, enemy.posY, true)
+*/
+function checkTileAbove(enemy) {
+  if (checkDirection(enemy.posX, enemy.posY - units.boxHeight + 1, true)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+function checkTileBelow(enemy) {
   console.log(enemy.direction);
-  if (enemy.direction === 'up') {
-    //check right box
-    if (checkDirection(enemy.posX + units.boxWidth + 1, enemy.posY, true)) {
-      enemy.direction = 'right';
-      console.log('changing to right direction');
-    } else {
-      enemy.direction = 'left';
-      console.log('changing to left direction');
-    }
-  } else if (enemy.direction === 'down') {
-    //check right box
-    if (checkDirection(enemy.posX + units.boxWidth + 1, enemy.posY, true)) {
-      enemy.direction = 'right';
-      console.log('changing to right direction');
-    } else {
-      enemy.direction = 'left';
-      console.log('changing to left direction');
-    }
-  } else if (enemy.direction === 'left') {
-    //check down box
-    if (checkDirection(enemy.posX, enemy.posY + units.boxHeight + 1, true)) {
-      enemy.direction = 'down';
-      console.log('changing to down direction');
-      console.log(enemy.posX, enemy.posY);
-      window.cancelAnimationFrame();
-    } else {
-      enemy.direction = 'up';
-      console.log('changing to up direction');
-    }
-  } else if (enemy.direction === 'right') {
-    //check down box
-    if (checkDirection(enemy.posX, enemy.posY + units.boxHeight + 1, true)) {
-      enemy.direction = 'down';
-      console.log('changing to down direction');
-    } else {
-      enemy.direction = 'up';
-      console.log('changing to up direction');
-    }
+  if (checkDirection(enemy.posX, enemy.posY + units.boxHeight, true)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+function checkTileRight(enemy) {
+  if (checkDirection(enemy.posX + units.boxWidth, enemy.posY + 1, true)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+function checkTileLeft(enemy) {
+  if (checkDirection(enemy.posX - units.boxWidth + 1, enemy.posY + 1, true)) {
+    return true;
+  } else {
+    return false;
   }
 }
 
-/* function changeDirection(enemy) {
-    console.log(enemy.direction);
-    if (enemy.direction === 'up' || enemy.direction === 'down') {
-      //check right box
-      if (checkDirection(enemy.posX + units.boxWidth + 1, enemy.posY, true)) {
-        enemy.direction = 'right';
-        enemy.posX++;
-      } else {
-        enemy.direction = 'left';
-        enemy.posX--;
-      }
-    }  else if (enemy.direction === 'left' || enemy.direction === 'right') {
-      //check down box
-      if (checkDirection(enemy.posX, enemy.posY + units.boxHeight + 1, true)) {
-        enemy.direction = 'down';
-        enemy.posY++;
-      } else {
-        enemy.direction = 'up';
-        enemy.posY--;
-      }
-    }
-  } */
+function checkSurroundingTiles(enemy) {
+  // Check each direction in a prioritized order
+  if (enemy.direction !== 'down' && checkTileAbove(enemy)) {
+    return { up: true, down: false, left: false, right: false };
+  }
+  if (enemy.direction !== 'right' && checkTileLeft(enemy)) {
+    return { up: false, down: false, left: true, right: false };
+  }
+  if (enemy.direction !== 'up' && checkTileBelow(enemy)) {
+    return { up: false, down: true, left: false, right: false };
+  }
+  if (enemy.direction !== 'left' && checkTileRight(enemy)) {
+    return { up: false, down: false, left: false, right: true };
+  }
+  // If none of the directions are available, return all false
+  return { up: false, down: false, left: false, right: false };
+}
+
+function changeDirection(enemy) {
+  const enemyDirectionsObj = checkSurroundingTiles(enemy);
+  console.log(enemyDirectionsObj);
+  if (enemyDirectionsObj.down) {
+    enemy.direction = 'down';
+  } else if (enemyDirectionsObj.up) {
+    enemy.direction = 'up';
+  } else if (enemyDirectionsObj.left) {
+    enemy.direction = 'left';
+  } else if (enemyDirectionsObj.right) {
+    enemy.direction = 'right';
+  }
+}
+
 // Returnerer true hvis enemy kan bevege seg dit
-function checkDirection(posX, posY, log) {
+function checkDirection(posX, posY) {
   for (let i = 0; i < objects.length; i++) {
     if (
       posX >= objects[i].x &&
@@ -115,12 +119,13 @@ function checkDirection(posX, posY, log) {
       posY >= objects[i].y &&
       posY < objects[i].y + objects[i].height
     ) {
-      if (log) {
-        console.log(posX, posY, objects[i].x, objects[i].y);
-      }
       if (objects[i].type !== 1) {
         return false;
-      } else {
+      } /* else if (objects[i].type === 3) {
+        console.log('HEALTH LOSS');
+        enemies.pop();
+        window.alert('YOu took damage');
+      } */ else {
         return true;
       }
     }
@@ -132,33 +137,33 @@ function moveEnemies() {
   for (const enemy of enemies) {
     switch (enemy.direction) {
       case 'right':
-        if (!checkDirection(enemy.posX + units.boxWidth, enemy.posY)) {
-          console.log('hit');
-          changeDirection(enemy);
+        if (!checkDirection(enemy.posX + units.boxWidth, enemy.posY + 1)) {
+          console.log('hit right');
+          changeDirection(enemy, enemy.direction);
         } else {
           enemy.posX++;
         }
         break;
       case 'left':
-        if (!checkDirection(enemy.posX, enemy.posY)) {
-          console.log('hit');
-          changeDirection(enemy);
+        if (!checkDirection(enemy.posX - 1, enemy.posY + 1)) {
+          console.log('hit left');
+          changeDirection(enemy, enemy.direction);
         } else {
           enemy.posX--;
         }
         break;
       case 'up':
-        if (!checkDirection(enemy.posX, enemy.posY)) {
-          console.log('hit');
-          changeDirection(enemy);
+        if (!checkDirection(enemy.posX + 1, enemy.posY)) {
+          console.log('hit up');
+          changeDirection(enemy, enemy.direction);
         } else {
           enemy.posY--;
         }
         break;
       case 'down':
         if (!checkDirection(enemy.posX, enemy.posY + units.boxHeight)) {
-          console.log('hit');
-          changeDirection(enemy);
+          console.log('hit down');
+          changeDirection(enemy, enemy.direction);
         } else {
           enemy.posY++;
         }
@@ -178,7 +183,7 @@ function drawEnemy() {
   for (const enemy of enemies) {
     ctx.beginPath();
     ctx.fillStyle = enemy.color;
-    ctx.fillRect(enemy.posX, enemy.posY, enemy.width, enemy.height);
+    ctx.fillRect(enemy.posX, enemy.posY, 3, 3);
     ctx.stroke();
   }
 }
@@ -313,7 +318,6 @@ c.addEventListener('click', (e) => {
   } else {
     console.log('miss', target.selected);
   }
-  renderFrame();
 });
 
 /* 
