@@ -13,9 +13,11 @@ class Base {
 }
 
 export class Enemy extends Base {
-  constructor(posX, posY, height, width, hp, type, dmg) {
-    super(posX, posY, height, width, hp, type);
+  constructor(posX, posY, height, width, hp, type, dmg, color, direction) {
+    super(posX, posY, height, width, hp, type, color, direction);
     this.dmg = dmg;
+    this.color = color;
+    this.direction = direction;
     this.boundedMove = this.move.bind(this);
   }
 

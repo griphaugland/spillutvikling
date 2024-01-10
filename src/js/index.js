@@ -1,5 +1,5 @@
 import { calculateGameSize } from './responsive/unitSystem.js';
-import { Tower } from './base/base.js';
+import { Tower, Enemy } from './base/base.js';
 
 let units = calculateGameSize();
 
@@ -25,6 +25,149 @@ let map = [
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ];
+
+enemies.push(
+  new Enemy(
+    100,
+    0,
+    units.boxWidth,
+    units.boxHeight,
+    200,
+    5,
+    100,
+    'red',
+    'down',
+  ),
+);
+console.log(enemies);
+
+function changeDirection(enemy) {
+  console.log(enemy.direction);
+  if (enemy.direction === 'up') {
+    //check right box
+    if (checkDirection(enemy.posX + units.boxWidth + 1, enemy.posY, true)) {
+      enemy.direction = 'right';
+      console.log('changing to right direction');
+    } else {
+      enemy.direction = 'left';
+      console.log('changing to left direction');
+    }
+  } else if (enemy.direction === 'down') {
+    //check right box
+    if (checkDirection(enemy.posX + units.boxWidth + 1, enemy.posY, true)) {
+      enemy.direction = 'right';
+      console.log('changing to right direction');
+    } else {
+      enemy.direction = 'left';
+      console.log('changing to left direction');
+    }
+  } else if (enemy.direction === 'left') {
+    //check down box
+    if (checkDirection(enemy.posX, enemy.posY + units.boxHeight + 1, true)) {
+      enemy.direction = 'down';
+      console.log('changing to down direction');
+      console.log(enemy.posX, enemy.posY);
+      window.cancelAnimationFrame();
+    } else {
+      enemy.direction = 'up';
+      console.log('changing to up direction');
+    }
+  } else if (enemy.direction === 'right') {
+    //check down box
+    if (checkDirection(enemy.posX, enemy.posY + units.boxHeight + 1, true)) {
+      enemy.direction = 'down';
+      console.log('changing to down direction');
+    } else {
+      enemy.direction = 'up';
+      console.log('changing to up direction');
+    }
+  }
+}
+
+/* function changeDirection(enemy) {
+    console.log(enemy.direction);
+    if (enemy.direction === 'up' || enemy.direction === 'down') {
+      //check right box
+      if (checkDirection(enemy.posX + units.boxWidth + 1, enemy.posY, true)) {
+        enemy.direction = 'right';
+        enemy.posX++;
+      } else {
+        enemy.direction = 'left';
+        enemy.posX--;
+      }
+    }  else if (enemy.direction === 'left' || enemy.direction === 'right') {
+      //check down box
+      if (checkDirection(enemy.posX, enemy.posY + units.boxHeight + 1, true)) {
+        enemy.direction = 'down';
+        enemy.posY++;
+      } else {
+        enemy.direction = 'up';
+        enemy.posY--;
+      }
+    }
+  } */
+// Returnerer true hvis enemy kan bevege seg dit
+function checkDirection(posX, posY, log) {
+  for (let i = 0; i < objects.length; i++) {
+    if (
+      posX >= objects[i].x &&
+      posX < objects[i].x + objects[i].width &&
+      posY >= objects[i].y &&
+      posY < objects[i].y + objects[i].height
+    ) {
+      if (log) {
+        console.log(posX, posY, objects[i].x, objects[i].y);
+      }
+      if (objects[i].type !== 1) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function moveEnemies() {
+  for (const enemy of enemies) {
+    switch (enemy.direction) {
+      case 'right':
+        if (!checkDirection(enemy.posX + units.boxWidth, enemy.posY)) {
+          console.log('hit');
+          changeDirection(enemy);
+        } else {
+          enemy.posX++;
+        }
+        break;
+      case 'left':
+        if (!checkDirection(enemy.posX, enemy.posY)) {
+          console.log('hit');
+          changeDirection(enemy);
+        } else {
+          enemy.posX--;
+        }
+        break;
+      case 'up':
+        if (!checkDirection(enemy.posX, enemy.posY)) {
+          console.log('hit');
+          changeDirection(enemy);
+        } else {
+          enemy.posY--;
+        }
+        break;
+      case 'down':
+        if (!checkDirection(enemy.posX, enemy.posY + units.boxHeight)) {
+          console.log('hit');
+          changeDirection(enemy);
+        } else {
+          enemy.posY++;
+        }
+        break;
+      default:
+        break;
+    }
+  }
+}
 
 // Regular tile = 0
 // Enemy Path = 1
@@ -59,14 +202,13 @@ function drawTiles() {
 }
 
 function drawGridLayout() {
-  for (let i = 0; i < units.lineLength; i++) {
+  for (let i = 0; i <= units.lineLength; i++) {
     ctx.beginPath();
     ctx.moveTo(i * units.boxHeight, 0);
     ctx.lineTo(i * units.boxHeight, units.maxCanvasHeight);
     ctx.stroke();
   }
-
-  for (let i = 0; i < units.lineLength; i++) {
+  for (let i = 0; i <= units.lineLength; i++) {
     ctx.beginPath();
     ctx.moveTo(0, i * units.boxWidth);
     ctx.lineTo(units.maxCanvasWidth, i * units.boxWidth);
@@ -78,10 +220,11 @@ function renderFrame() {
   drawTiles();
   drawGridLayout();
   drawTower();
-  console.log(objects);
+  moveEnemies();
   if (roundStart) {
     drawEnemy();
   }
+  requestAnimationFrame(renderFrame);
 }
 function updateSizes() {
   objects = [];
@@ -103,7 +246,7 @@ function updateSizes() {
           y: i * units.boxHeight,
           height: units.boxHeight,
           width: units.boxWidth,
-          color: 'red',
+          color: 'lightgreen',
           type: 1,
         });
       } else if (map[count] == 3) {
@@ -167,7 +310,6 @@ c.addEventListener('click', (e) => {
     );
 
     objects[target.selected].type = 4;
-    /*       setGameHistory() */
   } else {
     console.log('miss', target.selected);
   }
