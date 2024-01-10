@@ -10,34 +10,26 @@ let enemies = [];
 let towers = [];
 let roundStart = true;
 
+// prettier-ignore
 let map = [
-  0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  1, 0, 0, 0, 0, 0, 1, 1, 1, 3, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0,
-  0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0,
-  0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0,
-  1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 3, 
+    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
+    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
+    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
+    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
+    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
+    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
+    0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 ];
 
-/* checkGameHistory()
-
-function checkGameHistory(){
-    if(localStorage.getItem("previousGameHistory")){
-        let previousGame =  JSON.parse(localStorage.getItem("previousGameHistory"))
-        enemies = previousGame.enemies
-        towers = previousGame.towers
-        console.log('found previous game, started with data from previous game')
-    } else {
-        console.log('no game history in localstorage, starting new game')
-    }
-}
-function setGameHistory(){
-    let currentGame = {
-        enemies,
-        towers,
-    }
-    localStorage.setItem('previousGameHistory', JSON.stringify(currentGame))
-} */
+// Regular tile = 0
+// Enemy Path = 1
+// Home base = 3
+// Towers = 4
 
 function drawEnemy() {
   for (const enemy of enemies) {
@@ -103,7 +95,7 @@ function updateSizes() {
           height: units.boxHeight,
           width: units.boxWidth,
           color: 'white',
-          valid: i === true,
+          type: 0,
         });
       } else if (map[count] == 1) {
         objects.push({
@@ -112,7 +104,7 @@ function updateSizes() {
           height: units.boxHeight,
           width: units.boxWidth,
           color: 'red',
-          valid: i === false,
+          type: 1,
         });
       } else if (map[count] == 3) {
         objects.push({
@@ -120,9 +112,8 @@ function updateSizes() {
           y: i * units.boxHeight,
           height: units.boxHeight,
           width: units.boxWidth,
-          type: 'base',
           color: 'blue',
-          valid: i === false,
+          type: 3,
         });
       }
       count++;
@@ -139,17 +130,6 @@ window.addEventListener('resize', () => {
   units = calculateGameSize();
   updateSizes();
 });
-
-function checkValidTile(x, y) {
-  const res = objects.filter((item) => {
-    item.posX === x && item.posY === y;
-  });
-  if (res.length) {
-    return true;
-  } else {
-    return false;
-  }
-}
 
 c.addEventListener('click', (e) => {
   const x = e.offsetX;
@@ -170,8 +150,7 @@ c.addEventListener('click', (e) => {
       break;
     }
   }
-
-  if (target.hit && checkValidTile(x, y)) {
+  if (target.hit && objects[target.selected].type == 0) {
     console.log('hit, placed tower on tile', target.selected);
     const posX = units.boxWidth * Math.floor(x / units.boxWidth);
     const posY = units.boxHeight * Math.floor(y / units.boxHeight);
@@ -182,10 +161,12 @@ c.addEventListener('click', (e) => {
         units.boxWidth,
         units.boxHeight,
         100,
-        'enemy1',
+        'tower',
         'green',
       ),
     );
+
+    objects[target.selected].type = 4;
     /*       setGameHistory() */
   } else {
     console.log('miss', target.selected);
@@ -194,14 +175,6 @@ c.addEventListener('click', (e) => {
 });
 
 /* 
-Placing a specific tower
-   towers.push(posX, posY, units.boxWidth, units.boxHeight, towerDamage, towerName, type)
-
-
-
-towers.push(new Tower(40, 40, units.boxWidth, units.boxHeight, 100, "enemy1",  "green"))
-towers.push(new Tower(20, 20, units.boxWidth, units.boxHeight, 100, "enemy2",  "blue"))
-towers.push(new Tower(80, 80, units.boxWidth, units.boxHeight, 100, "enemy2",  "orange"))
 
 const Board = new Canvas();
 const testBase = new Base(200, 100, 100, 100, 100);
@@ -212,3 +185,23 @@ const characters = [testBase, testTower, testEnemy];
 Board.move() 
 Board.draw(characters);
  */
+
+/* checkGameHistory()
+
+function checkGameHistory(){
+    if(localStorage.getItem("previousGameHistory")){
+        let previousGame =  JSON.parse(localStorage.getItem("previousGameHistory"))
+        enemies = previousGame.enemies
+        towers = previousGame.towers
+        console.log('found previous game, started with data from previous game')
+    } else {
+        console.log('no game history in localstorage, starting new game')
+    }
+}
+function setGameHistory(){
+    let currentGame = {
+        enemies,
+        towers,
+    }
+    localStorage.setItem('previousGameHistory', JSON.stringify(currentGame))
+} */
