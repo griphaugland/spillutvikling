@@ -13,12 +13,12 @@ let roundStart = true;
 // prettier-ignore
 let map = [
     0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 
-    0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 
-    0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 
-    0, 0, 1, 0, 0, 6, 6, 0, 1, 0, 0, 0, 
-    0, 0, 1, 0, 0, 6, 6, 0, 1, 1, 0, 0, 
-    0, 0, 1, 0, 0, 6, 6, 0, 0, 1, 0, 0, 
+    0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+    0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 3, 
+    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
+    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
+    0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 
+    0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 
     0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 
     0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 
     0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 
@@ -39,6 +39,46 @@ enemies.push(
     'down',
   ),
 );
+enemies.push(
+  new Enemy(
+    units.boxWidth * 2,
+    units.boxWidth * 0,
+    units.boxWidth,
+    units.boxHeight,
+    200,
+    5,
+    100,
+    'red',
+    'down',
+  ),
+);
+enemies.push(
+  new Enemy(
+    units.boxWidth * 2,
+    units.boxWidth * 0,
+    units.boxWidth,
+    units.boxHeight,
+    200,
+    5,
+    100,
+    'red',
+    'down',
+  ),
+);
+enemies.push(
+  new Enemy(
+    units.boxWidth * 2,
+    units.boxWidth * 0,
+    units.boxWidth,
+    units.boxHeight,
+    200,
+    5,
+    100,
+    'red',
+    'down',
+  ),
+);
+
 console.log(enemies);
 
 /* 
@@ -137,27 +177,37 @@ function moveEnemies() {
   for (const enemy of enemies) {
     switch (enemy.direction) {
       case 'right':
-        if (!checkDirection(enemy.posX + units.boxWidth, enemy.posY + 1)) {
+        if (
+          !checkDirection(
+            enemy.posX + units.boxWidth,
+            enemy.posY + units.multiplier,
+          )
+        ) {
           console.log('hit right');
           changeDirection(enemy, enemy.direction);
         } else {
-          enemy.posX++;
+          enemy.posX += units.multiplier;
         }
         break;
       case 'left':
-        if (!checkDirection(enemy.posX - 1, enemy.posY + 1)) {
+        if (
+          !checkDirection(
+            enemy.posX - units.multiplier,
+            enemy.posY + units.multiplier,
+          )
+        ) {
           console.log('hit left');
           changeDirection(enemy, enemy.direction);
         } else {
-          enemy.posX--;
+          enemy.posX -= units.multiplier;
         }
         break;
       case 'up':
-        if (!checkDirection(enemy.posX + 1, enemy.posY)) {
+        if (!checkDirection(enemy.posX + units.multiplier, enemy.posY)) {
           console.log('hit up');
           changeDirection(enemy, enemy.direction);
         } else {
-          enemy.posY--;
+          enemy.posY -= units.multiplier;
         }
         break;
       case 'down':
@@ -165,7 +215,7 @@ function moveEnemies() {
           console.log('hit down');
           changeDirection(enemy, enemy.direction);
         } else {
-          enemy.posY++;
+          enemy.posY += units.multiplier;
         }
         break;
       default:
@@ -278,13 +328,16 @@ function updateSizes() {
   }
   c.width = units.maxCanvasWidth;
   c.height = units.maxCanvasHeight;
-  renderFrame();
 }
 updateSizes();
 renderFrame();
 
 window.addEventListener('resize', () => {
   units = calculateGameSize();
+  for (let enemy of enemies) {
+    enemy.posX = enemy.posX * units.multiplier;
+    enemy.posY = enemy.posY * units.multiplier;
+  }
   updateSizes();
 });
 
