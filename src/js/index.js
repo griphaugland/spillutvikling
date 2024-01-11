@@ -5,7 +5,7 @@ let units = calculateGameSize();
 
 const c = document.getElementById('canvas');
 const ctx = c.getContext('2d');
-let objects = [];
+let tiles = [];
 let enemies = [];
 let towers = [];
 let roundStart = true;
@@ -16,9 +16,9 @@ let map = [
     0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 
     0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 
     0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 
-    0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 
-    0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 
-    0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 
+    0, 0, 1, 0, 0, 6, 6, 0, 1, 0, 0, 0, 
+    0, 0, 1, 0, 0, 6, 6, 0, 1, 1, 0, 0, 
+    0, 0, 1, 0, 0, 6, 6, 0, 0, 1, 0, 0, 
     0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 
     0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 
     0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 
@@ -112,16 +112,16 @@ function changeDirection(enemy) {
 
 // Returnerer true hvis enemy kan bevege seg dit
 function checkDirection(posX, posY) {
-  for (let i = 0; i < objects.length; i++) {
+  for (let i = 0; i < tiles.length; i++) {
     if (
-      posX >= objects[i].x &&
-      posX < objects[i].x + objects[i].width &&
-      posY >= objects[i].y &&
-      posY < objects[i].y + objects[i].height
+      posX >= tiles[i].x &&
+      posX < tiles[i].x + tiles[i].width &&
+      posY >= tiles[i].y &&
+      posY < tiles[i].y + tiles[i].height
     ) {
-      if (objects[i].type !== 1) {
+      if (tiles[i].type !== 1) {
         return false;
-      } /* else if (objects[i].type === 3) {
+      } /* else if (tiles[i].type === 3) {
         console.log('HEALTH LOSS');
         enemies.pop();
         window.alert('YOu took damage');
@@ -183,7 +183,7 @@ function drawEnemy() {
   for (const enemy of enemies) {
     ctx.beginPath();
     ctx.fillStyle = enemy.color;
-    ctx.fillRect(enemy.posX, enemy.posY, 3, 3);
+    ctx.fillRect(enemy.posX, enemy.posY, units.boxWidth, units.boxHeight);
     ctx.stroke();
   }
 }
@@ -198,10 +198,10 @@ function drawTower() {
 }
 
 function drawTiles() {
-  for (const object of objects) {
+  for (const tile of tiles) {
     ctx.beginPath();
-    ctx.fillStyle = object.color;
-    ctx.fillRect(object.x, object.y, object.width, object.height);
+    ctx.fillStyle = tile.color;
+    ctx.fillRect(tile.x, tile.y, tile.width, tile.height);
     ctx.stroke();
   }
 }
@@ -232,12 +232,12 @@ function renderFrame() {
   requestAnimationFrame(renderFrame);
 }
 function updateSizes() {
-  objects = [];
+  tiles = [];
   let count = 0;
   for (let i = 0; i < units.lineLength; i++) {
     for (let k = 0; k < units.lineLength; k++) {
       if (map[count] == 0) {
-        objects.push({
+        tiles.push({
           x: k * units.boxWidth,
           y: i * units.boxHeight,
           height: units.boxHeight,
@@ -246,7 +246,7 @@ function updateSizes() {
           type: 0,
         });
       } else if (map[count] == 1) {
-        objects.push({
+        tiles.push({
           x: k * units.boxWidth,
           y: i * units.boxHeight,
           height: units.boxHeight,
@@ -255,12 +255,21 @@ function updateSizes() {
           type: 1,
         });
       } else if (map[count] == 3) {
-        objects.push({
+        tiles.push({
           x: k * units.boxWidth,
           y: i * units.boxHeight,
           height: units.boxHeight,
           width: units.boxWidth,
           color: 'blue',
+          type: 3,
+        });
+      } else if (map[count] == 6) {
+        tiles.push({
+          x: k * units.boxWidth,
+          y: i * units.boxHeight,
+          height: units.boxHeight,
+          width: units.boxWidth,
+          color: 'orange',
           type: 3,
         });
       }
@@ -286,19 +295,19 @@ c.addEventListener('click', (e) => {
     hit: false,
     selected: 0,
   };
-  for (let i = 0; i < objects.length; i++) {
+  for (let i = 0; i < tiles.length; i++) {
     if (
-      x >= objects[i].x &&
-      x <= objects[i].x + objects[i].width &&
-      y > objects[i].y &&
-      y < objects[i].y + objects[i].height
+      x >= tiles[i].x &&
+      x <= tiles[i].x + tiles[i].width &&
+      y > tiles[i].y &&
+      y < tiles[i].y + tiles[i].height
     ) {
       target.hit = true;
       target.selected = i;
       break;
     }
   }
-  if (target.hit && objects[target.selected].type == 0) {
+  if (target.hit && tiles[target.selected].type == 0) {
     console.log('hit, placed tower on tile', target.selected);
     const posX = units.boxWidth * Math.floor(x / units.boxWidth);
     const posY = units.boxHeight * Math.floor(y / units.boxHeight);
@@ -314,7 +323,7 @@ c.addEventListener('click', (e) => {
       ),
     );
 
-    objects[target.selected].type = 4;
+    tiles[target.selected].type = 4;
   } else {
     console.log('miss', target.selected);
   }
