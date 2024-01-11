@@ -1,0 +1,11 @@
+# ignore specific files
+.env*
+.eslintcache
+
+# ignore specific folders
+dist/
+node_modules/
+
+# do not ignore these files
+!.gitignore
+!.env.example
