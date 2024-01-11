@@ -235,7 +235,7 @@ function renderFrame() {
   moveEnemies();
   if (roundStart) {
     drawEnemy();
-    spawnEnemies(10, spawnEnemies(10, 10));
+    spawnEnemies(10, 10);
   }
   requestAnimationFrame(renderFrame);
 }
