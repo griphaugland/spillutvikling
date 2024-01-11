@@ -25,14 +25,10 @@ let map = [
     0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
 ];
-
 let lastEnemy = 0;
-function enemySpeed(seconds) {
-  let speed = seconds * 60;
-  return speed;
-}
+
 function spawnEnemies(max, delay) {
-  if (enemies.length < max && lastEnemy > delay) {
+  if (enemies.length < max && lastEnemy > 60 * delay) {
     enemies.push(
       new Enemy(
         units.boxWidth * 2,
@@ -51,20 +47,6 @@ function spawnEnemies(max, delay) {
     lastEnemy++;
   }
 }
-
-/* function setInterval(callback, delay, repetitions) {
-  let x = 0;
-  let intervalID = window.setInterval(function () {
-
-     callback();
-
-     if (++x === repetitions) {
-         window.clearInterval(intervalID);
-     }
-  }, delay);
-};
-
-setInterval(spawnEnemies, 2000, 20); */
 
 /* 
 SJEKK TILEN (RETURNERER TRUE / FALSE OM TILEN KAN GÅS PÅ):
@@ -253,7 +235,7 @@ function renderFrame() {
   moveEnemies();
   if (roundStart) {
     drawEnemy();
-    spawnEnemies(10, enemySpeed(1));
+    spawnEnemies(10, spawnEnemies(10, 10));
   }
   requestAnimationFrame(renderFrame);
 }
