@@ -26,20 +26,38 @@ let map = [
     0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
 ];
 
-enemies.push(
-  new Enemy(
-    units.boxWidth * 2,
-    units.boxWidth * 0,
-    units.boxWidth,
-    units.boxHeight,
-    200,
-    5,
-    100,
-    'red',
-    'down',
-  ),
-);
-console.log(enemies);
+/**
+ * Max determines the number of enemies spawned
+ * Delay determines the time between each spawn
+ * Checks if lastEnemy is higher than delay times 60
+ * and checks if the length of the enemies array is longer than max
+ * if enemies array is lower than max and last enemy is higher than delay * 60
+ * it pushes an enemy into the enemies array and resets lastEnemy to 0
+ * if not then lastEnemy gets added one. It does this check 60 times per second (60fps)
+ * @param {number} max
+ * @param {number} delay
+ */
+let lastEnemy = 0;
+function spawnEnemies(max, delay) {
+  if (enemies.length < max && lastEnemy > 60 * delay) {
+    enemies.push(
+      new Enemy(
+        units.boxWidth * 2,
+        units.boxWidth * 0,
+        units.boxWidth,
+        units.boxHeight,
+        200,
+        5,
+        100,
+        'red',
+        'down',
+      ),
+    );
+    lastEnemy = 0;
+  } else {
+    lastEnemy++;
+  }
+}
 
 /* 
 SJEKK TILEN (RETURNERER TRUE / FALSE OM TILEN KAN GÅS PÅ):
@@ -228,6 +246,7 @@ function renderFrame() {
   moveEnemies();
   if (roundStart) {
     drawEnemy();
+    spawnEnemies(10, 10);
   }
   requestAnimationFrame(renderFrame);
 }
