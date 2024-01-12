@@ -1,45 +1,52 @@
 import { calculateGameSize } from './responsive/unitSystem.js';
 import { Tower, Enemy } from './base/base.js';
+import { getMap } from './maps/map.js';
 
 let units = calculateGameSize();
 
 const c = document.getElementById('canvas');
 const ctx = c.getContext('2d');
+
 let tiles = [];
 let enemies = [];
 let towers = [];
 let roundStart = true;
 
-// prettier-ignore
-let map = [
-    0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 
-    0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 
-    0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 
-    0, 0, 1, 0, 0, 6, 6, 0, 1, 0, 0, 0, 
-    0, 0, 1, 0, 0, 6, 6, 0, 1, 1, 0, 0, 
-    0, 0, 1, 0, 0, 6, 6, 0, 0, 1, 0, 0, 
-    0, 0, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 
-    0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 0, 
-    0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
-];
+let map = await getMap();
+console.log(map);
 
-enemies.push(
-  new Enemy(
-    units.boxWidth * 2,
-    units.boxWidth * 0,
-    units.boxWidth,
-    units.boxHeight,
-    200,
-    5,
-    100,
-    'red',
-    'down',
-  ),
-);
-console.log(enemies);
+/**
+ * Max determines the number of enemies spawned
+ * Delay determines the time between each spawn
+ * Checks if lastEnemy is higher than delay times 60
+ * and checks if the length of the enemies array is longer than max
+ * if enemies array is lower than max and last enemy is higher than delay * 60
+ * it pushes an enemy into the enemies array and resets lastEnemy to 0
+ * if not then lastEnemy gets added one. It does this check 60 times per second (60fps)
+ * @param {number} max
+ * @param {number} delay
+ */
+let lastEnemy = 0;
+function spawnEnemies(max, delay) {
+  if (enemies.length < max && lastEnemy > 60 * delay) {
+    enemies.push(
+      new Enemy(
+        units.boxWidth * 2,
+        units.boxWidth * 0,
+        units.boxWidth,
+        units.boxHeight,
+        200,
+        5,
+        100,
+        'red',
+        'down',
+      ),
+    );
+    lastEnemy = 0;
+  } else {
+    lastEnemy++;
+  }
+}
 
 /* 
 SJEKK TILEN (RETURNERER TRUE / FALSE OM TILEN KAN GÅS PÅ):
@@ -174,11 +181,6 @@ function moveEnemies() {
   }
 }
 
-// Regular tile = 0
-// Enemy Path = 1
-// Home base = 3
-// Towers = 4
-
 function drawEnemy() {
   for (const enemy of enemies) {
     ctx.beginPath();
@@ -228,6 +230,7 @@ function renderFrame() {
   moveEnemies();
   if (roundStart) {
     drawEnemy();
+    spawnEnemies(10, 10);
   }
   requestAnimationFrame(renderFrame);
 }
@@ -236,7 +239,7 @@ function updateSizes() {
   let count = 0;
   for (let i = 0; i < units.lineLength; i++) {
     for (let k = 0; k < units.lineLength; k++) {
-      if (map[count] == 0) {
+      if (map.layout[count] == 0) {
         tiles.push({
           x: k * units.boxWidth,
           y: i * units.boxHeight,
@@ -245,31 +248,40 @@ function updateSizes() {
           color: 'white',
           type: 0,
         });
-      } else if (map[count] == 1) {
+      } else if (map.layout[count] == 10) {
         tiles.push({
           x: k * units.boxWidth,
           y: i * units.boxHeight,
           height: units.boxHeight,
           width: units.boxWidth,
-          color: 'lightgreen',
+          color: 'lime',
+          type: 3,
+        });
+      } else if (map.layout[count] == 11) {
+        tiles.push({
+          x: k * units.boxWidth,
+          y: i * units.boxHeight,
+          height: units.boxHeight,
+          width: units.boxWidth,
+          color: 'salmon',
           type: 1,
         });
-      } else if (map[count] == 3) {
+      } else if (map.layout[count] == 12) {
+        tiles.push({
+          x: k * units.boxWidth,
+          y: i * units.boxHeight,
+          height: units.boxHeight,
+          width: units.boxWidth,
+          color: 'red',
+          type: 3,
+        });
+      } else if (map.layout[count] == 13) {
         tiles.push({
           x: k * units.boxWidth,
           y: i * units.boxHeight,
           height: units.boxHeight,
           width: units.boxWidth,
           color: 'blue',
-          type: 3,
-        });
-      } else if (map[count] == 6) {
-        tiles.push({
-          x: k * units.boxWidth,
-          y: i * units.boxHeight,
-          height: units.boxHeight,
-          width: units.boxWidth,
-          color: 'orange',
           type: 3,
         });
       }
@@ -319,13 +331,9 @@ c.addEventListener('click', (e) => {
         units.boxHeight,
         100,
         'tower',
-        'green',
+        'lime',
       ),
     );
-
-    tiles[target.selected].type = 4;
-  } else {
-    console.log('miss', target.selected);
   }
 });
 
