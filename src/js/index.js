@@ -12,6 +12,7 @@ let enemies = [];
 let towers = [];
 let roundStart = true;
 
+
 let map = await getMap();
 console.log(map);
 
@@ -144,27 +145,37 @@ function moveEnemies() {
   for (const enemy of enemies) {
     switch (enemy.direction) {
       case 'right':
-        if (!checkDirection(enemy.posX + units.boxWidth, enemy.posY + 1)) {
+        if (
+          !checkDirection(
+            enemy.posX + units.boxWidth,
+            enemy.posY + units.multiplier,
+          )
+        ) {
           console.log('hit right');
           changeDirection(enemy, enemy.direction);
         } else {
-          enemy.posX++;
+          enemy.posX += units.multiplier;
         }
         break;
       case 'left':
-        if (!checkDirection(enemy.posX - 1, enemy.posY + 1)) {
+        if (
+          !checkDirection(
+            enemy.posX - units.multiplier,
+            enemy.posY + units.multiplier,
+          )
+        ) {
           console.log('hit left');
           changeDirection(enemy, enemy.direction);
         } else {
-          enemy.posX--;
+          enemy.posX -= units.multiplier;
         }
         break;
       case 'up':
-        if (!checkDirection(enemy.posX + 1, enemy.posY)) {
+        if (!checkDirection(enemy.posX + units.multiplier, enemy.posY)) {
           console.log('hit up');
           changeDirection(enemy, enemy.direction);
         } else {
-          enemy.posY--;
+          enemy.posY -= units.multiplier;
         }
         break;
       case 'down':
@@ -172,7 +183,7 @@ function moveEnemies() {
           console.log('hit down');
           changeDirection(enemy, enemy.direction);
         } else {
-          enemy.posY++;
+          enemy.posY += units.multiplier;
         }
         break;
       default:
@@ -290,13 +301,16 @@ function updateSizes() {
   }
   c.width = units.maxCanvasWidth;
   c.height = units.maxCanvasHeight;
-  renderFrame();
 }
 updateSizes();
 renderFrame();
 
 window.addEventListener('resize', () => {
   units = calculateGameSize();
+  for (let enemy of enemies) {
+    enemy.posX = enemy.posX * units.multiplier;
+    enemy.posY = enemy.posY * units.multiplier;
+  }
   updateSizes();
 });
 
