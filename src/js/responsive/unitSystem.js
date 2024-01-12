@@ -22,28 +22,27 @@ export function calculateGameSize() {
   if (screenSizeWidth > 1000 && screenSizeHeight > 900) {
     console.log('large');
     units.multiplier = 1.4;
-    (units.boxHeight = units.boxHeight * units.multiplier),
-      (units.maxCanvasHeight = units.maxCanvasHeight * units.multiplier),
-      (units.boxWidth = units.boxWidth * units.multiplier),
-      (units.maxCanvasWidth = units.maxCanvasWidth * units.multiplier);
-
+    units.boxHeight = units.boxHeight * units.multiplier;
+    units.maxCanvasHeight = units.maxCanvasHeight * units.multiplier;
+    units.boxWidth = units.boxWidth * units.multiplier;
+    units.maxCanvasWidth = units.maxCanvasWidth * units.multiplier;
     return units;
   } else if (screenSizeWidth >= 600) {
     console.log('medium');
     units.multiplier = 1;
-    (units.boxHeight = units.boxHeight * units.multiplier),
-      (units.maxCanvasHeight = units.maxCanvasHeight * units.multiplier),
-      (units.boxWidth = units.boxWidth * units.multiplier),
-      (units.maxCanvasWidth = units.maxCanvasWidth * units.multiplier);
+    units.boxHeight = units.boxHeight * units.multiplier;
+    units.maxCanvasHeight = units.maxCanvasHeight * units.multiplier;
+    units.boxWidth = units.boxWidth * units.multiplier;
+    units.maxCanvasWidth = units.maxCanvasWidth * units.multiplier;
 
     return units;
   } else if (screenSizeWidth <= 600) {
     console.log('small');
     units.multiplier = 0.6;
-    (units.boxHeight = units.boxHeight * units.multiplier),
-      (units.maxCanvasHeight = units.maxCanvasHeight * units.multiplier),
-      (units.boxWidth = units.boxWidth * units.multiplier),
-      (units.maxCanvasWidth = units.maxCanvasWidth * units.multiplier);
+    units.boxHeight = units.boxHeight * units.multiplier;
+    units.maxCanvasHeight = units.maxCanvasHeight * units.multiplier;
+    units.boxWidth = units.boxWidth * units.multiplier;
+    units.maxCanvasWidth = units.maxCanvasWidth * units.multiplier;
 
     return units;
   }
