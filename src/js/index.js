@@ -25,8 +25,19 @@ let map = [
     0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 
     0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0,
 ];
-let lastEnemy = 0;
 
+/**
+ * Max determines the number of enemies spawned
+ * Delay determines the time between each spawn
+ * Checks if lastEnemy is higher than delay times 60
+ * and checks if the length of the enemies array is longer than max
+ * if enemies array is lower than max and last enemy is higher than delay * 60
+ * it pushes an enemy into the enemies array and resets lastEnemy to 0
+ * if not then lastEnemy gets added one. It does this check 60 times per second (60fps)
+ * @param {number} max
+ * @param {number} delay
+ */
+let lastEnemy = 0;
 function spawnEnemies(max, delay) {
   if (enemies.length < max && lastEnemy > 60 * delay) {
     enemies.push(
