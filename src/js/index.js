@@ -1,5 +1,6 @@
 import { calculateGameSize } from './responsive/unitSystem.js';
-import { Tower, Enemy } from './base/base.js';
+import { Tower, Enemy, gameObjects } from './base/base.js';
+
 import { getMap } from './maps/map.js';
 
 let units = calculateGameSize();
@@ -19,10 +20,9 @@ const c = document.getElementById('canvas');
 const ctx = c.getContext('2d');
 
 let tiles = [];
-let enemies = [];
+export let enemies = [];
 let towers = [];
 let roundStart = true;
-
 let map = await getMap(1);
 console.log(map);
 
@@ -53,12 +53,14 @@ function spawnEnemies(max, delay) {
         'down',
       ),
     );
-    lastEnemy = 0;
+    
+/*     console.log(enemies)*/    
+lastEnemy = 0;
   } else {
     lastEnemy++;
   }
+  
 }
-
 /* 
 SJEKK TILEN (RETURNERER TRUE / FALSE OM TILEN KAN GÅS PÅ):
 SJEKK TILEN UNDER: checkDirection(enemy.posX, enemy.posY +units.boxHeight, true)
@@ -196,6 +198,7 @@ function moveEnemies() {
         }
         break;
       case 'up':
+
         if (!checkDirection(enemy.posX + units.multiplier, enemy.posY)) {
           changeDirection(enemy, enemy.direction);
         } else {
@@ -279,6 +282,7 @@ function renderFrame() {
       drawEnemy();
       spawnEnemies(3, 1);
     }
+      loopOverTowers()
     requestAnimationFrame(renderFrame);
   }
 }
@@ -298,6 +302,38 @@ function updateUnits() {
   c.width = units.maxCanvasWidth;
   c.height = units.maxCanvasHeight;
 }
+
+function loopOverTowers(){
+  for (const tower of towers) {
+    if(tower.lastAttack > tower.attackSpeed){
+      for (const enemy of enemies) {
+      
+        if (
+            enemy.posX >= tower.posX - tower.radius &&
+            enemy.posX <= tower.posX + tower.radius &&
+            enemy.posY >= tower.posY - tower.radius &&
+            enemy.posY <= tower.posY + tower.radius
+        ) {
+            console.log("inside radius");
+            shoot(enemy)
+            tower.lastAttack = 0
+            ctx.fillRect(tower.posX-tower.radius, tower.posY - tower.radius, tower.radius*2+tower.width, tower.radius*2+tower.height)
+            break
+        }
+    }
+
+    }
+   tower.lastAttack++
+  }
+}
+
+function shoot(enemy){
+  ctx.fillStyle = "black"
+  ctx.fillRect(enemy.posX, enemy.posY, enemy.width, enemy.height)
+
+}
+
+
 function updateSizes() {
   const units = calculateGameSize();
   let size;
@@ -417,6 +453,7 @@ c.addEventListener('click', (e) => {
         'lime',
       ),
     );
+    gameObjects(towers, enemies)
   }
 });
 
