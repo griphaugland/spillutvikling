@@ -4,9 +4,9 @@ import { Tower, Enemy, gameObjects } from './base/base.js';
 import { getMap } from './maps/map.js';
 
 let units = calculateGameSize();
-/* let units = units; */
 let state = 'game';
 let lastSize;
+let currency;
 if (units.multiplier === 1) {
   lastSize = 2;
 } else if (units.multiplier === 0.6) {
@@ -51,9 +51,11 @@ function spawnEnemies(max, delay) {
         100,
         'red',
         'down',
+        50,
       ),
     );
     enemyControl++;
+
     lastEnemy = 0;
   } else {
     lastEnemy++;
@@ -358,6 +360,7 @@ function loadMap() {
   }
   c.width = units.maxCanvasWidth;
   c.height = units.maxCanvasHeight;
+  currency = 200;
 }
 
 window.addEventListener('resize', () => {
@@ -387,20 +390,48 @@ c.addEventListener('click', (e) => {
     console.log('hit, placed tower on tile', target.selected);
     const posX = units.boxWidth * Math.floor(x / units.boxWidth);
     const posY = units.boxHeight * Math.floor(y / units.boxHeight);
-    towers.push(
-      new Tower(
-        posX,
-        posY,
-        units.boxWidth,
-        units.boxHeight,
-        100,
-        'tower',
-        'lime',
-      ),
-    );
+    if (currency >= 100) {
+      towers.push(
+        new Tower(
+          posX,
+          posY,
+          units.boxWidth,
+          units.boxHeight,
+          100,
+          'tower',
+          'lime',
+        ),
+      );
+      currency -= 100;
+    } else {
+      console.log('not enough money');
+      notEnoughCurrency(posY, posX);
+    }
     gameObjects(towers, enemies);
   }
 });
+
+function notEnoughCurrency(posY, posX) {
+  tiles.push({
+    x: posX,
+    y: posY,
+    height: units.boxHeight,
+    width: units.boxWidth,
+    color: 'red',
+    type: 0,
+  });
+
+  setTimeout(() => {
+    tiles.push({
+      x: posX,
+      y: posY,
+      height: units.boxHeight,
+      width: units.boxWidth,
+      color: 'white',
+      type: 0,
+    });
+  }, 200);
+}
 
 /* 
 
@@ -473,9 +504,9 @@ function shoot(enemy, dmg, i) {
   ctx.fillStyle = 'black';
   ctx.fillRect(enemy.posX, enemy.posY, enemy.width, enemy.height);
   enemy.hp -= dmg;
-  console.log(enemy.hp);
   if (enemy.hp <= 0) {
     removeEnemy(i);
+    currency += enemy.value;
   }
 }
 
@@ -492,11 +523,9 @@ function renderFrame() {
     drawGridLayout();
     drawTower();
     moveEnemies();
-
     drawEnemy();
     spawnEnemies(10, 1);
     loopOverTowers();
-
     requestAnimationFrame(renderFrame);
   }
 }
