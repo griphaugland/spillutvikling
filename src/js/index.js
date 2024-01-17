@@ -22,7 +22,6 @@ const ctx = c.getContext('2d');
 let tiles = [];
 export let enemies = [];
 let towers = [];
-let roundStart = true;
 let map = await getMap(1);
 console.log(map);
 
@@ -53,13 +52,12 @@ function spawnEnemies(max, delay) {
         'down',
       ),
     );
-    
-/*     console.log(enemies)*/    
-lastEnemy = 0;
+
+    /*     console.log(enemies)*/
+    lastEnemy = 0;
   } else {
     lastEnemy++;
   }
-  
 }
 /* 
 SJEKK TILEN (RETURNERER TRUE / FALSE OM TILEN KAN GÅS PÅ):
@@ -198,7 +196,6 @@ function moveEnemies() {
         }
         break;
       case 'up':
-
         if (!checkDirection(enemy.posX + units.multiplier, enemy.posY)) {
           changeDirection(enemy, enemy.direction);
         } else {
@@ -268,24 +265,6 @@ pauseButton.addEventListener('click', () => {
   }
 });
 
-function renderFrame() {
-  if (state === 'pause') {
-    console.log('game paused, press play to continue');
-    requestAnimationFrame(renderFrame);
-  } else if (state === 'game') {
-    console.log('game continued, press pause to pause');
-    drawTiles();
-    drawGridLayout();
-    drawTower();
-    moveEnemies();
-    if (roundStart) {
-      drawEnemy();
-      spawnEnemies(3, 1);
-    }
-      loopOverTowers()
-    requestAnimationFrame(renderFrame);
-  }
-}
 function updateUnits() {
   for (let i = 0; i < units.lineLength; i++) {
     for (let k = 0; k < units.lineLength; k++) {
@@ -302,37 +281,6 @@ function updateUnits() {
   c.width = units.maxCanvasWidth;
   c.height = units.maxCanvasHeight;
 }
-
-function loopOverTowers(){
-  for (const tower of towers) {
-    if(tower.lastAttack > tower.attackSpeed){
-      for (const enemy of enemies) {
-      
-        if (
-            enemy.posX >= tower.posX - tower.radius &&
-            enemy.posX <= tower.posX + tower.radius &&
-            enemy.posY >= tower.posY - tower.radius &&
-            enemy.posY <= tower.posY + tower.radius
-        ) {
-            console.log("inside radius");
-            shoot(enemy)
-            tower.lastAttack = 0
-            ctx.fillRect(tower.posX-tower.radius, tower.posY - tower.radius, tower.radius*2+tower.width, tower.radius*2+tower.height)
-            break
-        }
-    }
-
-    }
-   tower.lastAttack++
-  }
-}
-
-function shoot(enemy){
-  ctx.fillStyle = "black"
-  ctx.fillRect(enemy.posX, enemy.posY, enemy.width, enemy.height)
-
-}
-
 
 function updateSizes() {
   const units = calculateGameSize();
@@ -353,9 +301,6 @@ function updateSizes() {
     size;
   }
 }
-
-loadMap();
-renderFrame();
 
 function loadMap() {
   tiles = [];
@@ -453,7 +398,7 @@ c.addEventListener('click', (e) => {
         'lime',
       ),
     );
-    gameObjects(towers, enemies)
+    gameObjects(towers, enemies);
   }
 });
 
@@ -488,3 +433,73 @@ function setGameHistory(){
     }
     localStorage.setItem('previousGameHistory', JSON.stringify(currentGame))
 } */
+
+function checkRadius(enemy, tower) {
+  if (
+    enemy.posX >= tower.posX - tower.radius &&
+    enemy.posX <= tower.posX + tower.width + tower.radius &&
+    enemy.posY >= tower.posY - tower.radius &&
+    enemy.posY <= tower.posY + tower.height + tower.radius
+  ) {
+    return true;
+  }
+  return false;
+}
+function loopOverTowers() {
+  for (const tower of towers) {
+    if (tower.lastAttack > tower.attackSpeed) {
+      for (const i in enemies) {
+        if (checkRadius(enemies[i], tower)) {
+          console.log('inside radius');
+          shoot(enemies[i], tower.dmg, i);
+          tower.lastAttack = 0;
+          /*   
+       Shows radius of tower
+       ctx.fillRect(
+            tower.posX - tower.radius,
+            tower.posY - tower.radius,
+            tower.radius * 2 + tower.width,
+            tower.radius * 2 + tower.height,
+          ); */
+          break;
+        }
+      }
+    }
+    tower.lastAttack++;
+  }
+}
+
+function shoot(enemy, dmg, i) {
+  ctx.fillStyle = 'black';
+  ctx.fillRect(enemy.posX, enemy.posY, enemy.width, enemy.height);
+  enemy.hp -= dmg;
+  console.log(enemy.hp);
+  if (enemy.hp <= 0) {
+    removeEnemy(i);
+  }
+}
+
+function removeEnemy(i) {
+  console.log('removed enemy', i);
+  enemies.shift();
+}
+
+function renderFrame() {
+  if (state === 'pause') {
+    requestAnimationFrame(renderFrame);
+  } else if (state === 'game') {
+    drawTiles();
+    drawGridLayout();
+    drawTower();
+    moveEnemies();
+
+    drawEnemy();
+    spawnEnemies(3, 1);
+    loopOverTowers();
+
+    requestAnimationFrame(renderFrame);
+  }
+}
+
+loadMap();
+renderFrame();
