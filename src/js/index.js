@@ -37,9 +37,8 @@ console.log(map);
  * @param {number} delay
  */
 let lastEnemy = 0;
-let enemyControl = 0;
 function spawnEnemies(max, delay) {
-  if (enemyControl < max && lastEnemy > 60 * delay) {
+  if (enemies.length < max && lastEnemy > 60 * delay) {
     enemies.push(
       new Enemy(
         units.boxWidth * 2,
@@ -54,8 +53,6 @@ function spawnEnemies(max, delay) {
         50,
       ),
     );
-    enemyControl++;
-
     lastEnemy = 0;
   } else {
     lastEnemy++;
@@ -402,6 +399,7 @@ c.addEventListener('click', (e) => {
           'lime',
         ),
       );
+      tiles[target.selected].type = 10;
       currency -= 100;
     } else {
       console.log('not enough money');
@@ -464,7 +462,53 @@ function setGameHistory(){
     }
     localStorage.setItem('previousGameHistory', JSON.stringify(currentGame))
 } */
-
+let hover;
+let mouseX = 0;
+let mouseY = 0;
+window.addEventListener('mousemove', (e) => {
+  if (hover) {
+    console.log(e.offsetX, e.offsetY);
+    mouseX = e.offsetX;
+    mouseY = e.offsetY;
+  }
+});
+c.addEventListener('mouseenter', (e) => {
+  mouseX = e.offsetX;
+  mouseY = e.offsetY;
+  hover = true;
+});
+c.addEventListener('mouseout', () => {
+  hover = false;
+});
+function drawHoverBox(mouseX, mouseY) {
+  const x = mouseX;
+  const y = mouseY;
+  let target = {
+    hit: false,
+    selected: 0,
+  };
+  for (let i = 0; i < tiles.length; i++) {
+    if (
+      x >= tiles[i].x &&
+      x <= tiles[i].x + tiles[i].width &&
+      y > tiles[i].y &&
+      y < tiles[i].y + tiles[i].height
+    ) {
+      target.hit = true;
+      target.selected = i;
+      break;
+    }
+  }
+  const posX = units.boxWidth * Math.floor(x / units.boxWidth);
+  const posY = units.boxWidth * Math.floor(y / units.boxWidth);
+  if (target.hit && tiles[target.selected].type == 0 && currency >= 100) {
+    ctx.fillStyle = 'green';
+    ctx.fillRect(posX, posY, units.boxWidth, units.boxHeight);
+  } else {
+    ctx.fillStyle = 'red';
+    ctx.fillRect(posX, posY, units.boxWidth, units.boxHeight);
+  }
+}
 function checkRadius(enemy, tower) {
   if (
     enemy.posX >= tower.posX - tower.radius &&
@@ -481,7 +525,6 @@ function loopOverTowers() {
     if (tower.lastAttack > tower.attackSpeed) {
       for (const i in enemies) {
         if (checkRadius(enemies[i], tower)) {
-          console.log('inside radius');
           shoot(enemies[i], tower.dmg, i);
           tower.lastAttack = 0;
           /*   
@@ -512,7 +555,7 @@ function shoot(enemy, dmg, i) {
 
 function removeEnemy(i) {
   console.log('removed enemy', i);
-  enemies.splice(i, 1);
+  enemies.shift();
 }
 
 function renderFrame() {
@@ -524,7 +567,10 @@ function renderFrame() {
     drawTower();
     moveEnemies();
     drawEnemy();
-    spawnEnemies(10, 1);
+    spawnEnemies(3, 1);
+    if (hover) {
+      drawHoverBox(mouseX, mouseY);
+    }
     loopOverTowers();
     requestAnimationFrame(renderFrame);
   }
