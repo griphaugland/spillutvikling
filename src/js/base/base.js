@@ -13,10 +13,22 @@ class Base {
 }
 
 export class Enemy extends Base {
-  constructor(posX, posY, height, width, hp, type, dmg, color, direction) {
+  constructor(
+    posX,
+    posY,
+    height,
+    width,
+    hp,
+    type,
+    dmg,
+    color,
+    direction,
+    value,
+  ) {
     super(posX, posY, height, width, hp, type, color, direction);
     this.dmg = dmg;
     this.color = color;
+    this.value = value;
     this.direction = direction;
     this.boundedMove = this.move.bind(this);
   }
@@ -46,24 +58,17 @@ export class Tower {
     this.type = type;
     this.color = color;
     this.radius = 100;
-    this.lastAttack= 0;
+    this.lastAttack = 0;
     this.attackSpeed = 10;
+    this.price = 100;
   }
-
-
-
 
   isAttackValid() {
-    const value = this.test()
-    console.log(value)
+    const value = this.test();
+    console.log(value);
   }
-  
 }
 
-
-
-export function gameObjects (towers, enemies){
-console.log(towers, enemies)
-
-
+export function gameObjects(towers, enemies) {
+  console.log(towers, enemies);
 }
