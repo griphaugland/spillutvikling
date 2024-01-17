@@ -4,7 +4,18 @@ import { Tower, Enemy, gameObjects } from './base/base.js';
 import { getMap } from './maps/map.js';
 
 let units = calculateGameSize();
+/* let units = units; */
+let state = 'game';
+let lastSize;
+if (units.multiplier === 1) {
+  lastSize = 2;
+} else if (units.multiplier === 0.6) {
+  lastSize = 1;
+} else if (units.multiplier === 1.4) {
+  lastSize = 3;
+}
 
+console.log(lastSize);
 const c = document.getElementById('canvas');
 const ctx = c.getContext('2d');
 
@@ -12,10 +23,7 @@ let tiles = [];
 export let enemies = [];
 let towers = [];
 let roundStart = true;
-
-
-
-let map = await getMap();
+let map = await getMap(1);
 console.log(map);
 
 /**
@@ -55,35 +63,53 @@ lastEnemy = 0;
 }
 /* 
 SJEKK TILEN (RETURNERER TRUE / FALSE OM TILEN KAN GÅS PÅ):
-SJEKK TILEN UNDER: checkDirection(enemy.posX, enemy.posY + units.boxHeight, true)
-SJEKK TILEN OVER: checkDirection(enemy.posX, enemy.posY - units.boxHeight, true)
-SJEKK TILEN TIL VENSTRE: checkDirection(enemy.posX - units.boxWidth, enemy.posY, true)
-SJEKK TILEN TIL HØYRE: checkDirection(enemy.posX + units.boxWidth, enemy.posY, true)
+SJEKK TILEN UNDER: checkDirection(enemy.posX, enemy.posY +units.boxHeight, true)
+SJEKK TILEN OVER: checkDirection(enemy.posX, enemy.posY -units.boxHeight, true)
+SJEKK TILEN TIL VENSTRE: checkDirection(enemy.posX -units.boxWidth, enemy.posY, true)
+SJEKK TILEN TIL HØYRE: checkDirection(enemy.posX +units.boxWidth, enemy.posY, true)
 */
+
 function checkTileAbove(enemy) {
-  if (checkDirection(enemy.posX, enemy.posY - units.boxHeight + 1, true)) {
+  if (
+    checkDirection(
+      enemy.posX,
+      enemy.posY - units.boxHeight + units.multiplier,
+      true,
+    )
+  ) {
     return true;
   } else {
     return false;
   }
 }
 function checkTileBelow(enemy) {
-/*   console.log(enemy.direction);
- */  if (checkDirection(enemy.posX, enemy.posY + units.boxHeight, true)) {
+  if (checkDirection(enemy.posX, enemy.posY + units.boxHeight, true)) {
     return true;
   } else {
     return false;
   }
 }
 function checkTileRight(enemy) {
-  if (checkDirection(enemy.posX + units.boxWidth, enemy.posY + 1, true)) {
+  if (
+    checkDirection(
+      enemy.posX + units.boxWidth,
+      enemy.posY + units.multiplier,
+      true,
+    )
+  ) {
     return true;
   } else {
     return false;
   }
 }
 function checkTileLeft(enemy) {
-  if (checkDirection(enemy.posX - units.boxWidth + 1, enemy.posY + 1, true)) {
+  if (
+    checkDirection(
+      enemy.posX - units.boxWidth + units.multiplier,
+      enemy.posY + units.multiplier,
+      true,
+    )
+  ) {
     return true;
   } else {
     return false;
@@ -110,8 +136,7 @@ function checkSurroundingTiles(enemy) {
 
 function changeDirection(enemy) {
   const enemyDirectionsObj = checkSurroundingTiles(enemy);
-/*   console.log(enemyDirectionsObj);
- */  if (enemyDirectionsObj.down) {
+  if (enemyDirectionsObj.down) {
     enemy.direction = 'down';
   } else if (enemyDirectionsObj.up) {
     enemy.direction = 'up';
@@ -149,35 +174,42 @@ function moveEnemies() {
   for (const enemy of enemies) {
     switch (enemy.direction) {
       case 'right':
-        if (!checkDirection(enemy.posX + units.boxWidth, enemy.posY + 1)) {
-/*           console.log('hit right');
- */          changeDirection(enemy, enemy.direction);
+        if (
+          !checkDirection(
+            enemy.posX + units.boxWidth,
+            enemy.posY + units.multiplier,
+          )
+        ) {
+          changeDirection(enemy, enemy.direction);
         } else {
-          enemy.posX++;
+          enemy.posX += units.multiplier;
         }
         break;
       case 'left':
-        if (!checkDirection(enemy.posX - 1, enemy.posY + 1)) {
-/*           console.log('hit left');
- */          changeDirection(enemy, enemy.direction);
+        if (
+          !checkDirection(
+            enemy.posX - units.multiplier,
+            enemy.posY + units.multiplier,
+          )
+        ) {
+          changeDirection(enemy, enemy.direction);
         } else {
-          enemy.posX--;
+          enemy.posX -= units.multiplier;
         }
         break;
       case 'up':
-        if (!checkDirection(enemy.posX + 1, enemy.posY)) {
-/*           console.log('hit up');
- */          changeDirection(enemy, enemy.direction);
+
+        if (!checkDirection(enemy.posX + units.multiplier, enemy.posY)) {
+          changeDirection(enemy, enemy.direction);
         } else {
-          enemy.posY--;
+          enemy.posY -= units.multiplier;
         }
         break;
       case 'down':
         if (!checkDirection(enemy.posX, enemy.posY + units.boxHeight)) {
-/*           console.log('hit down');
- */          changeDirection(enemy, enemy.direction);
+          changeDirection(enemy, enemy.direction);
         } else {
-          enemy.posY++;
+          enemy.posY += units.multiplier;
         }
         break;
       default:
@@ -227,18 +259,48 @@ function drawGridLayout() {
     ctx.stroke();
   }
 }
+const pauseButton = document.getElementById('pause');
+pauseButton.addEventListener('click', () => {
+  if (state === 'game') {
+    state = 'pause';
+  } else if (state === 'pause') {
+    state = 'game';
+  }
+});
 
 function renderFrame() {
-  drawTiles();
-  drawGridLayout();
-  drawTower();
-  moveEnemies();
-  if (roundStart) {
-    drawEnemy();
-    spawnEnemies(4, 5);
+  if (state === 'pause') {
+    console.log('game paused, press play to continue');
+    requestAnimationFrame(renderFrame);
+  } else if (state === 'game') {
+    console.log('game continued, press pause to pause');
+    drawTiles();
+    drawGridLayout();
+    drawTower();
+    moveEnemies();
+    if (roundStart) {
+      drawEnemy();
+      spawnEnemies(3, 1);
+    }
+      loopOverTowers()
+    requestAnimationFrame(renderFrame);
   }
-  loopOverTowers()
-  requestAnimationFrame(renderFrame);
+}
+function updateUnits() {
+  for (let i = 0; i < units.lineLength; i++) {
+    for (let k = 0; k < units.lineLength; k++) {
+      tiles[i].x = k * units.boxWidth;
+      tiles[i].y = i * units.boxHeight;
+      tiles[i].width = units.boxWidth;
+      tiles[i].height = units.boxHeight;
+    }
+  }
+  for (let enemy of enemies) {
+    enemy.posX = enemy.posX * units.multiplier;
+    enemy.posY = enemy.posY * units.multiplier;
+  }
+  c.width = units.maxCanvasWidth;
+  c.height = units.maxCanvasHeight;
 }
 
 function loopOverTowers(){
@@ -273,6 +335,29 @@ function shoot(enemy){
 
 
 function updateSizes() {
+  const units = calculateGameSize();
+  let size;
+  if (units.multiplier === 1) {
+    size = 2;
+  } else if (units.multiplier === 0.6) {
+    size = 1;
+  } else if (units.multiplier === 1.4) {
+    size = 3;
+  }
+  if (size != lastSize) {
+    lastSize = size;
+    updateUnits();
+    state = 'game';
+  }
+  if (lastSize === 1) {
+    size;
+  }
+}
+
+loadMap();
+renderFrame();
+
+function loadMap() {
   tiles = [];
   let count = 0;
   for (let i = 0; i < units.lineLength; i++) {
@@ -328,13 +413,9 @@ function updateSizes() {
   }
   c.width = units.maxCanvasWidth;
   c.height = units.maxCanvasHeight;
-  renderFrame();
 }
-updateSizes();
-renderFrame();
 
 window.addEventListener('resize', () => {
-  units = calculateGameSize();
   updateSizes();
 });
 
