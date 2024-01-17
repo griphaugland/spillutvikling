@@ -23,7 +23,7 @@ let enemies = [];
 let towers = [];
 let roundStart = true;
 
-let map = await getMap();
+let map = await getMap(1);
 console.log(map);
 
 /**
@@ -256,11 +256,21 @@ function drawGridLayout() {
     ctx.stroke();
   }
 }
+const pauseButton = document.getElementById('pause');
+pauseButton.addEventListener('click', () => {
+  if (state === 'game') {
+    state = 'pause';
+  } else if (state === 'pause') {
+    state = 'game';
+  }
+});
 
 function renderFrame() {
   if (state === 'pause') {
-    requestAnimationFrame();
+    console.log('game paused, press play to continue');
+    requestAnimationFrame(renderFrame);
   } else if (state === 'game') {
+    console.log('game continued, press pause to pause');
     drawTiles();
     drawGridLayout();
     drawTower();
@@ -300,11 +310,14 @@ function updateSizes() {
   }
   if (size != lastSize) {
     lastSize = size;
-    state = 'game';
     updateUnits();
+    state = 'game';
+  }
+  if (lastSize === 1) {
+    size;
   }
 }
-console.log(units);
+
 loadMap();
 renderFrame();
 
@@ -367,7 +380,6 @@ function loadMap() {
 }
 
 window.addEventListener('resize', () => {
-  state = 'pause';
   updateSizes();
 });
 
