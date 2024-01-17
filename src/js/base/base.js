@@ -45,5 +45,25 @@ export class Tower {
     this.dmg = dmg;
     this.type = type;
     this.color = color;
+    this.radius = 100;
+    this.lastAttack= 0;
+    this.attackSpeed = 10;
   }
+
+
+
+
+  isAttackValid() {
+    const value = this.test()
+    console.log(value)
+  }
+  
+}
+
+
+
+export function gameObjects (towers, enemies){
+console.log(towers, enemies)
+
+
 }

@@ -1,5 +1,6 @@
 import { calculateGameSize } from './responsive/unitSystem.js';
-import { Tower, Enemy } from './base/base.js';
+import { Tower, Enemy, gameObjects } from './base/base.js';
+
 import { getMap } from './maps/map.js';
 
 let units = calculateGameSize();
@@ -8,9 +9,11 @@ const c = document.getElementById('canvas');
 const ctx = c.getContext('2d');
 
 let tiles = [];
-let enemies = [];
+export let enemies = [];
 let towers = [];
 let roundStart = true;
+
+
 
 let map = await getMap();
 console.log(map);
@@ -42,12 +45,14 @@ function spawnEnemies(max, delay) {
         'down',
       ),
     );
-    lastEnemy = 0;
+    
+/*     console.log(enemies)*/    
+lastEnemy = 0;
   } else {
     lastEnemy++;
   }
+  
 }
-
 /* 
 SJEKK TILEN (RETURNERER TRUE / FALSE OM TILEN KAN GÅS PÅ):
 SJEKK TILEN UNDER: checkDirection(enemy.posX, enemy.posY + units.boxHeight, true)
@@ -63,8 +68,8 @@ function checkTileAbove(enemy) {
   }
 }
 function checkTileBelow(enemy) {
-  console.log(enemy.direction);
-  if (checkDirection(enemy.posX, enemy.posY + units.boxHeight, true)) {
+/*   console.log(enemy.direction);
+ */  if (checkDirection(enemy.posX, enemy.posY + units.boxHeight, true)) {
     return true;
   } else {
     return false;
@@ -105,8 +110,8 @@ function checkSurroundingTiles(enemy) {
 
 function changeDirection(enemy) {
   const enemyDirectionsObj = checkSurroundingTiles(enemy);
-  console.log(enemyDirectionsObj);
-  if (enemyDirectionsObj.down) {
+/*   console.log(enemyDirectionsObj);
+ */  if (enemyDirectionsObj.down) {
     enemy.direction = 'down';
   } else if (enemyDirectionsObj.up) {
     enemy.direction = 'up';
@@ -145,32 +150,32 @@ function moveEnemies() {
     switch (enemy.direction) {
       case 'right':
         if (!checkDirection(enemy.posX + units.boxWidth, enemy.posY + 1)) {
-          console.log('hit right');
-          changeDirection(enemy, enemy.direction);
+/*           console.log('hit right');
+ */          changeDirection(enemy, enemy.direction);
         } else {
           enemy.posX++;
         }
         break;
       case 'left':
         if (!checkDirection(enemy.posX - 1, enemy.posY + 1)) {
-          console.log('hit left');
-          changeDirection(enemy, enemy.direction);
+/*           console.log('hit left');
+ */          changeDirection(enemy, enemy.direction);
         } else {
           enemy.posX--;
         }
         break;
       case 'up':
         if (!checkDirection(enemy.posX + 1, enemy.posY)) {
-          console.log('hit up');
-          changeDirection(enemy, enemy.direction);
+/*           console.log('hit up');
+ */          changeDirection(enemy, enemy.direction);
         } else {
           enemy.posY--;
         }
         break;
       case 'down':
         if (!checkDirection(enemy.posX, enemy.posY + units.boxHeight)) {
-          console.log('hit down');
-          changeDirection(enemy, enemy.direction);
+/*           console.log('hit down');
+ */          changeDirection(enemy, enemy.direction);
         } else {
           enemy.posY++;
         }
@@ -230,10 +235,43 @@ function renderFrame() {
   moveEnemies();
   if (roundStart) {
     drawEnemy();
-    spawnEnemies(10, 10);
+    spawnEnemies(4, 5);
   }
+  loopOverTowers()
   requestAnimationFrame(renderFrame);
 }
+
+function loopOverTowers(){
+  for (const tower of towers) {
+    if(tower.lastAttack > tower.attackSpeed){
+      for (const enemy of enemies) {
+      
+        if (
+            enemy.posX >= tower.posX - tower.radius &&
+            enemy.posX <= tower.posX + tower.radius &&
+            enemy.posY >= tower.posY - tower.radius &&
+            enemy.posY <= tower.posY + tower.radius
+        ) {
+            console.log("inside radius");
+            shoot(enemy)
+            tower.lastAttack = 0
+            ctx.fillRect(tower.posX-tower.radius, tower.posY - tower.radius, tower.radius*2+tower.width, tower.radius*2+tower.height)
+            break
+        }
+    }
+
+    }
+   tower.lastAttack++
+  }
+}
+
+function shoot(enemy){
+  ctx.fillStyle = "black"
+  ctx.fillRect(enemy.posX, enemy.posY, enemy.width, enemy.height)
+
+}
+
+
 function updateSizes() {
   tiles = [];
   let count = 0;
@@ -334,6 +372,7 @@ c.addEventListener('click', (e) => {
         'lime',
       ),
     );
+    gameObjects(towers, enemies)
   }
 });
 
