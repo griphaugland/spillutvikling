@@ -15,7 +15,6 @@ if (units.multiplier === 1) {
   lastSize = 3;
 }
 
-console.log(lastSize);
 const c = document.getElementById('canvas');
 const ctx = c.getContext('2d');
 
@@ -23,7 +22,6 @@ let tiles = [];
 export let enemies = [];
 let towers = [];
 let map = await getMap(1);
-console.log(map);
 
 /**
  * Max determines the number of enemies spawned
@@ -384,7 +382,6 @@ c.addEventListener('click', (e) => {
     }
   }
   if (target.hit && tiles[target.selected].type == 0) {
-    console.log('hit, placed tower on tile', target.selected);
     const posX = units.boxWidth * Math.floor(x / units.boxWidth);
     const posY = units.boxHeight * Math.floor(y / units.boxHeight);
     if (currency >= 100) {
@@ -402,7 +399,6 @@ c.addEventListener('click', (e) => {
       tiles[target.selected].type = 10;
       currency -= 100;
     } else {
-      console.log('not enough money');
       notEnoughCurrency(posY, posX);
     }
     gameObjects(towers, enemies);
@@ -467,7 +463,6 @@ let mouseX = 0;
 let mouseY = 0;
 window.addEventListener('mousemove', (e) => {
   if (hover) {
-    console.log(e.offsetX, e.offsetY);
     mouseX = e.offsetX;
     mouseY = e.offsetY;
   }
@@ -553,8 +548,7 @@ function shoot(enemy, dmg, i) {
   }
 }
 
-function removeEnemy(i) {
-  console.log('removed enemy', i);
+function removeEnemy() {
   enemies.shift();
 }
 
