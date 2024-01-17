@@ -37,8 +37,9 @@ console.log(map);
  * @param {number} delay
  */
 let lastEnemy = 0;
+let enemyControl = 0;
 function spawnEnemies(max, delay) {
-  if (enemies.length < max && lastEnemy > 60 * delay) {
+  if (enemyControl < max && lastEnemy > 60 * delay) {
     enemies.push(
       new Enemy(
         units.boxWidth * 2,
@@ -53,6 +54,8 @@ function spawnEnemies(max, delay) {
         50,
       ),
     );
+    enemyControl++;
+
     lastEnemy = 0;
   } else {
     lastEnemy++;
@@ -509,7 +512,7 @@ function shoot(enemy, dmg, i) {
 
 function removeEnemy(i) {
   console.log('removed enemy', i);
-  enemies.shift();
+  enemies.splice(i, 1);
 }
 
 function renderFrame() {
@@ -521,7 +524,7 @@ function renderFrame() {
     drawTower();
     moveEnemies();
     drawEnemy();
-    spawnEnemies(3, 1);
+    spawnEnemies(10, 1);
     loopOverTowers();
     requestAnimationFrame(renderFrame);
   }
