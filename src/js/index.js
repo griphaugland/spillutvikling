@@ -144,7 +144,7 @@ function changeDirection(enemy) {
 }
 
 // Returnerer true hvis enemy kan bevege seg dit
-function checkDirection(posX, posY) {
+function checkDirection(posX, posY, index) {
   for (let i = 0; i < tiles.length; i++) {
     if (
       posX >= tiles[i].x &&
@@ -152,14 +152,12 @@ function checkDirection(posX, posY) {
       posY >= tiles[i].y &&
       posY < tiles[i].y + tiles[i].height
     ) {
-      if (tiles[i].type !== 1) {
-        return false;
-      } /* else if (tiles[i].type === 3) {
-        console.log('HEALTH LOSS');
-        enemies.pop();
-        window.alert('YOu took damage');
-      } */ else {
+      if (tiles[i].type == 1) {
         return true;
+      } else if (tiles[i].type == 4) {
+        enemies[index].remove = true;
+      } else {
+        return false;
       }
     }
   }
@@ -167,44 +165,54 @@ function checkDirection(posX, posY) {
 }
 
 function moveEnemies() {
-  for (const enemy of enemies) {
-    switch (enemy.direction) {
+  for (const i in enemies) {
+    switch (enemies[i].direction) {
       case 'right':
         if (
           !checkDirection(
-            enemy.posX + units.boxWidth,
-            enemy.posY + units.multiplier,
+            enemies[i].posX + units.boxWidth,
+            enemies[i].posY + units.multiplier,
+            i,
           )
         ) {
-          changeDirection(enemy, enemy.direction);
+          changeDirection(enemies[i], enemies[i].direction, i);
         } else {
-          enemy.posX += units.multiplier;
+          enemies[i].posX += units.multiplier;
         }
         break;
       case 'left':
         if (
           !checkDirection(
-            enemy.posX - units.multiplier,
-            enemy.posY + units.multiplier,
+            enemies[i].posX - units.multiplier,
+            enemies[i].posY + units.multiplier,
+            i,
           )
         ) {
-          changeDirection(enemy, enemy.direction);
+          changeDirection(enemies[i], enemies[i].direction, i);
         } else {
-          enemy.posX -= units.multiplier;
+          enemies[i].posX -= units.multiplier;
         }
         break;
       case 'up':
-        if (!checkDirection(enemy.posX + units.multiplier, enemy.posY)) {
-          changeDirection(enemy, enemy.direction);
+        if (
+          !checkDirection(
+            enemies[i].posX + units.multiplier,
+            enemies[i].posY,
+            i,
+          )
+        ) {
+          changeDirection(enemies[i], enemies[i].direction, i);
         } else {
-          enemy.posY -= units.multiplier;
+          enemies[i].posY -= units.multiplier;
         }
         break;
       case 'down':
-        if (!checkDirection(enemy.posX, enemy.posY + units.boxHeight)) {
-          changeDirection(enemy, enemy.direction);
+        if (
+          !checkDirection(enemies[i].posX, enemies[i].posY + units.boxHeight, i)
+        ) {
+          changeDirection(enemies[i], enemies[i].direction, i);
         } else {
-          enemy.posY += units.multiplier;
+          enemies[i].posY += units.multiplier;
         }
         break;
       default:
@@ -348,7 +356,7 @@ function loadMap() {
           height: units.boxHeight,
           width: units.boxWidth,
           color: 'blue',
-          type: 3,
+          type: 4,
         });
       }
       count++;
@@ -554,16 +562,26 @@ function removeEnemy(i) {
   enemies.splice(i, 1);
 }
 
+function checkEnemies() {
+  for (let i in enemies) {
+    if (enemies[i].remove) {
+      removeEnemy(i);
+      break;
+    }
+  }
+}
+
 function renderFrame() {
   if (state === 'pause') {
     requestAnimationFrame(renderFrame);
   } else if (state === 'game') {
+    checkEnemies();
     drawTiles();
     drawGridLayout();
     drawTower();
     moveEnemies();
     drawEnemy();
-    spawnEnemies(3, 1);
+    spawnEnemies(10, 1);
     if (hover) {
       drawHoverBox(mouseX, mouseY);
     }
