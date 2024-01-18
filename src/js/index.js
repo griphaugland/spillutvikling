@@ -3,6 +3,15 @@ import { Tower, Enemy, gameObjects } from './base/base.js';
 
 import { getMap } from './maps/map.js';
 
+const enemyImages = [new Image(50, 50), new Image(50, 50), new Image(50, 50)];
+for (let i = 1; i <= 3; i++) {
+  enemyImages[i - 1].src = 'src/assets/enemy-' + i + '.png';
+}
+const towerImages = [new Image(50, 50), new Image(50, 50), new Image(50, 50)];
+for (let i = 1; i <= 3; i++) {
+  towerImages[i - 1].src = 'src/assets/tower-' + i + '.png';
+}
+
 let units = calculateGameSize();
 let state = 'game';
 let lastSize;
@@ -215,18 +224,87 @@ function moveEnemies() {
 function drawEnemy() {
   for (const enemy of enemies) {
     ctx.beginPath();
-    ctx.fillStyle = enemy.color;
-    ctx.fillRect(enemy.posX, enemy.posY, units.boxWidth, units.boxHeight);
+    /* ctx.fillStyle = enemy.color;
+    ctx.fillRect(enemy.posX, enemy.posY, units.boxWidth, units.boxHeight); */
+    enemy.animation++;
+    if (enemy.animation < 20) {
+      ctx.drawImage(
+        enemyImages[0],
+        enemy.posX,
+        enemy.posY,
+        enemy.width,
+        enemy.height,
+      );
+    } else if (enemy.animation < 40) {
+      ctx.drawImage(
+        enemyImages[1],
+        enemy.posX,
+        enemy.posY,
+        enemy.width,
+        enemy.height,
+      );
+    } else if (enemy.animation < 60) {
+      ctx.drawImage(
+        enemyImages[0],
+        enemy.posX,
+        enemy.posY,
+        enemy.width,
+        enemy.height,
+      );
+    } else if (enemy.animation < 80) {
+      ctx.drawImage(
+        enemyImages[2],
+        enemy.posX,
+        enemy.posY,
+        enemy.width,
+        enemy.height,
+      );
+    } else {
+      ctx.drawImage(
+        enemyImages[0],
+        enemy.posX,
+        enemy.posY,
+        enemy.width,
+        enemy.height,
+      );
+      enemy.animation = 0;
+    }
+
     ctx.stroke();
   }
 }
 
 function drawTower() {
   for (const tower of towers) {
-    ctx.beginPath();
+    /*     ctx.beginPath();
     ctx.fillStyle = tower.color;
     ctx.fillRect(tower.posX, tower.posY, tower.width, tower.height);
-    ctx.stroke();
+    ctx.stroke(); */
+    if (tower.lastAttack < 5) {
+      ctx.drawImage(
+        towerImages[2],
+        tower.posX,
+        tower.posY,
+        tower.width,
+        tower.height,
+      );
+    } /* else if (tower.lastAttack < 10) {
+      ctx.drawImage(
+        towerImages[2],
+        tower.posX,
+        tower.posY,
+        tower.width,
+        tower.height,
+      );
+    } */ else {
+      ctx.drawImage(
+        towerImages[0],
+        tower.posX,
+        tower.posY,
+        tower.width,
+        tower.height,
+      );
+    }
   }
 }
 

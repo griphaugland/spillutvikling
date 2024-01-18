@@ -31,6 +31,7 @@ export class Enemy extends Base {
     this.value = value;
     this.direction = direction;
     this.boundedMove = this.move.bind(this);
+    this.animation = 0;
   }
 
   move() {
