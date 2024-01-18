@@ -1,7 +1,7 @@
 import { calculateGameSize } from '../responsive/unitSystem.js';
 const units = calculateGameSize();
 
-class Base {
+export class Base {
   constructor(posX, posY, height, width, hp, type) {
     this.posX = posX;
     this.posY = posY;

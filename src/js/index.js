@@ -1,5 +1,5 @@
 import { calculateGameSize } from './responsive/unitSystem.js';
-import { Tower, Enemy, gameObjects } from './base/base.js';
+import { Base, Tower, Enemy, gameObjects } from './base/base.js';
 import { getMap } from './maps/map.js';
 
 let units = calculateGameSize();
@@ -21,6 +21,7 @@ let tiles = [];
 export let enemies = [];
 let towers = [];
 let map = await getMap(1);
+let base = new Base(0, 0, units.boxHeight, units.boxWidth, 1000, 13);
 
 /**
  
@@ -152,10 +153,18 @@ function checkDirection(posX, posY, index) {
       posY >= tiles[i].y &&
       posY < tiles[i].y + tiles[i].height
     ) {
-      if (tiles[i].type == 1) {
+      if (tiles[i].type == 11) {
         return true;
-      } else if (tiles[i].type == 4) {
+      } else if (tiles[i].type == 13) {
         enemies[index].remove = true;
+        base.hp -= enemies[index].dmg;
+        console.log(
+          'damaged base with:',
+          enemies[index].dmg,
+          '. Base now has',
+          base.hp,
+          'health left',
+        );
       } else {
         return false;
       }
@@ -329,7 +338,7 @@ function loadMap() {
           height: units.boxHeight,
           width: units.boxWidth,
           color: 'lime',
-          type: 3,
+          type: 10,
         });
       } else if (map.layout[count] == 11) {
         tiles.push({
@@ -338,7 +347,7 @@ function loadMap() {
           height: units.boxHeight,
           width: units.boxWidth,
           color: 'salmon',
-          type: 1,
+          type: 11,
         });
       } else if (map.layout[count] == 12) {
         tiles.push({
@@ -347,7 +356,7 @@ function loadMap() {
           height: units.boxHeight,
           width: units.boxWidth,
           color: 'red',
-          type: 3,
+          type: 12,
         });
       } else if (map.layout[count] == 13) {
         tiles.push({
@@ -356,7 +365,7 @@ function loadMap() {
           height: units.boxHeight,
           width: units.boxWidth,
           color: 'blue',
-          type: 4,
+          type: 13,
         });
       }
       count++;
@@ -365,6 +374,7 @@ function loadMap() {
   c.width = units.maxCanvasWidth;
   c.height = units.maxCanvasHeight;
   currency = 200;
+  identifyBaseTile();
 }
 
 window.addEventListener('resize', () => {
@@ -434,6 +444,13 @@ function notEnoughCurrency(posY, posX) {
       type: 0,
     });
   }, 200);
+}
+
+function identifyBaseTile() {
+  const baseTile = tiles.find((tile) => tile.type === 13);
+  base.posX = baseTile.x;
+  base.posY = baseTile.y;
+  return base;
 }
 
 /* 
