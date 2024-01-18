@@ -1,6 +1,5 @@
 import { calculateGameSize } from './responsive/unitSystem.js';
 import { Tower, Enemy, gameObjects } from './base/base.js';
-
 import { getMap } from './maps/map.js';
 
 let units = calculateGameSize();
@@ -24,19 +23,21 @@ let towers = [];
 let map = await getMap(1);
 
 /**
- * Max determines the number of enemies spawned
- * Delay determines the time between each spawn
- * Checks if lastEnemy is higher than delay times 60
- * and checks if the length of the enemies array is longer than max
- * if enemies array is lower than max and last enemy is higher than delay * 60
- * it pushes an enemy into the enemies array and resets lastEnemy to 0
- * if not then lastEnemy gets added one. It does this check 60 times per second (60fps)
- * @param {number} max
- * @param {number} delay
- */
+ 
+Max determines the number of enemies spawned
+Delay determines the time between each spawn
+Checks if lastEnemy is higher than delay times 60
+and checks if maxControl value is higer than max
+if enemies array is lower than max and last enemy is higher than delay * 60
+it pushes an enemy into the enemies array and resets lastEnemy to 0
+if not then lastEnemy gets added one. It does this check 60 times per second (60fps)
+@param {number} max
+@param {number} delay
+*/
 let lastEnemy = 0;
+let maxControl = 0;
 function spawnEnemies(max, delay) {
-  if (enemies.length < max && lastEnemy > 60 * delay) {
+  if (lastEnemy > 60 * delay && maxControl < max) {
     enemies.push(
       new Enemy(
         units.boxWidth * 2,
@@ -48,9 +49,9 @@ function spawnEnemies(max, delay) {
         100,
         'red',
         'down',
-        50,
       ),
     );
+    maxControl++;
     lastEnemy = 0;
   } else {
     lastEnemy++;
@@ -548,8 +549,9 @@ function shoot(enemy, dmg, i) {
   }
 }
 
-function removeEnemy() {
-  enemies.shift();
+function removeEnemy(i) {
+  console.log('removed enemy', i);
+  enemies.splice(i, 1);
 }
 
 function renderFrame() {
