@@ -637,12 +637,13 @@ const gameOverlay = document.querySelector('.game-overlay');
 function gameStatus() {
   if (base.hp == 0) {
     gameOverlay.style.display = 'flex';
+    gameOverlay.style.color = 'red';
     game.innerHTML = 'GAME OVER';
     state = 'pause';
   } else if (base.hp > 0 && map.enemies == kills) {
     gameOverlay.style.display = 'flex';
+    gameOverlay.style.color = 'green';
     game.innerHTML = 'VICTORY!';
-    game.color = 'green';
     state = 'pause';
   }
 }
