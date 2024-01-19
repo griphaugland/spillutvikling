@@ -257,8 +257,15 @@ function drawEnemy() {
 function drawTower() {
   for (const tower of towers) {
     ctx.beginPath();
-    ctx.fillStyle = tower.color;
-    ctx.fillRect(tower.posX, tower.posY, tower.width, tower.height);
+    const towerBackground = new Image();
+    towerBackground.src = map.towerimage1ç;
+    ctx.drawImage(
+      towerBackground,
+      tower.posX,
+      tower.posY,
+      tower.width,
+      tower.height,
+    );
     ctx.stroke();
   }
 }
