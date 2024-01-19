@@ -258,7 +258,7 @@ function drawTower() {
   for (const tower of towers) {
     ctx.beginPath();
     const towerBackground = new Image();
-    towerBackground.src = map.towerimage1ç;
+    towerBackground.src = map.towerimage1;
     ctx.drawImage(
       towerBackground,
       tower.posX,
