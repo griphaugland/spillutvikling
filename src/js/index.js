@@ -87,6 +87,7 @@ function checkTileAbove(enemy) {
     return false;
   }
 }
+
 function checkTileBelow(enemy) {
   if (checkDirection(enemy.posX, enemy.posY + units.boxHeight, true)) {
     return true;
@@ -94,6 +95,7 @@ function checkTileBelow(enemy) {
     return false;
   }
 }
+
 function checkTileRight(enemy) {
   if (
     checkDirection(
@@ -107,6 +109,7 @@ function checkTileRight(enemy) {
     return false;
   }
 }
+
 function checkTileLeft(enemy) {
   if (
     checkDirection(
