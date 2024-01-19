@@ -611,6 +611,7 @@ function checkEnemies() {
   for (let i in enemies) {
     if (enemies[i].remove) {
       removeEnemy(i);
+      kills++;
       break;
     }
   }
@@ -626,6 +627,7 @@ function renderFrame() {
     drawTower();
     moveEnemies();
     drawEnemy();
+    gameStatus();
     spawnEnemies(map.enemies, 1);
     if (hover) {
       drawHoverBox(mouseX, mouseY);
@@ -642,3 +644,20 @@ const container = document.querySelector('#container');
 container.style.width = `${units.maxCanvasWidth}px`;
 
 setScoreboard();
+
+const game = document.querySelector('.game-over');
+const gameOverlay = document.querySelector('.game-overlay');
+
+function gameStatus() {
+  if (base.hp == 0) {
+    gameOverlay.style.display = 'flex';
+    gameOverlay.style.color = 'red';
+    game.innerHTML = 'GAME OVER';
+    state = 'pause';
+  } else if (base.hp > 0 && map.enemies == kills) {
+    gameOverlay.style.display = 'flex';
+    gameOverlay.style.color = 'green';
+    game.innerHTML = 'VICTORY!';
+    state = 'pause';
+  }
+}
