@@ -286,7 +286,7 @@ function drawTiles() {
 }
 
 function drawGridLayout() {
-  for (let i = 0; i <= units.lineLength; i++) {
+  /*   for (let i = 0; i <= units.lineLength; i++) {
     ctx.beginPath();
     ctx.moveTo(i * units.boxHeight, 0);
     ctx.lineTo(i * units.boxHeight, units.maxCanvasHeight);
@@ -297,7 +297,7 @@ function drawGridLayout() {
     ctx.moveTo(0, i * units.boxWidth);
     ctx.lineTo(units.maxCanvasWidth, i * units.boxWidth);
     ctx.stroke();
-  }
+  } */
 }
 const pauseButton = document.getElementById('pause');
 pauseButton.addEventListener('click', () => {
