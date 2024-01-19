@@ -14,3 +14,26 @@ body {
   align-items: center;
   min-height: 100vh;
 }
+
+.scoreboard {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  font-size: 1.2rem;
+
+  #pause {
+    background-color: rgb(252, 252, 252);
+    border: 1px solid rgb(12, 12, 12);
+    padding: 12px 20px;
+    font-size: 1.2rem;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  #pause:hover {
+    background-color: rgb(242, 242, 242);
+  }
+}
