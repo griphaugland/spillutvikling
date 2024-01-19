@@ -422,6 +422,7 @@ c.addEventListener('click', (e) => {
           100,
           'tower',
           'lime',
+          100,
         ),
       );
       tiles[target.selected].type = 10;
