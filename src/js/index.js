@@ -1,11 +1,16 @@
 import { calculateGameSize } from './responsive/unitSystem.js';
 import { Base, Tower, Enemy, gameObjects } from './base/base.js';
+import {
+  setScoreboard,
+  updateScoreboardCurrency,
+  updateScoreboardHealth,
+  updateScoreboardKills,
+} from './scoreboard/scoreboard.js';
 import { getMap } from './maps/map.js';
 
 let units = calculateGameSize();
 let state = 'game';
 let lastSize;
-let currency;
 if (units.multiplier === 1) {
   lastSize = 2;
 } else if (units.multiplier === 0.6) {
@@ -18,10 +23,12 @@ const c = document.getElementById('canvas');
 const ctx = c.getContext('2d');
 
 let tiles = [];
+export let currency;
 export let enemies = [];
+export let kills = 0;
 let towers = [];
-let map = await getMap(1);
-let base = new Base(0, 0, units.boxHeight, units.boxWidth, 1000, 13);
+export let map = await getMap(1);
+export let base = new Base(0, 0, units.boxHeight, units.boxWidth, 1000, 13);
 
 /**
  
@@ -50,6 +57,7 @@ function spawnEnemies(max, delay) {
         100,
         'red',
         'down',
+        50,
       ),
     );
     maxControl++;
@@ -158,6 +166,7 @@ function checkDirection(posX, posY, index) {
       } else if (tiles[i].type == 13) {
         enemies[index].remove = true;
         base.hp -= enemies[index].dmg;
+        updateScoreboardHealth();
         console.log(
           'damaged base with:',
           enemies[index].dmg,
@@ -417,6 +426,7 @@ c.addEventListener('click', (e) => {
       );
       tiles[target.selected].type = 10;
       currency -= 100;
+      updateScoreboardCurrency();
     } else {
       notEnoughCurrency(posY, posX);
     }
@@ -571,6 +581,10 @@ function shoot(enemy, dmg, i) {
   if (enemy.hp <= 0) {
     removeEnemy(i);
     currency += enemy.value;
+    console.log(currency);
+    kills++;
+    updateScoreboardCurrency();
+    updateScoreboardKills();
   }
 }
 
@@ -598,7 +612,7 @@ function renderFrame() {
     drawTower();
     moveEnemies();
     drawEnemy();
-    spawnEnemies(10, 1);
+    spawnEnemies(map.enemies, 1);
     if (hover) {
       drawHoverBox(mouseX, mouseY);
     }
@@ -609,3 +623,8 @@ function renderFrame() {
 
 loadMap();
 renderFrame();
+
+const container = document.querySelector('#container');
+container.style.width = `${units.maxCanvasWidth}px`;
+
+setScoreboard();
