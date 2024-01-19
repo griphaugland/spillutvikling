@@ -30,6 +30,9 @@ let towers = [];
 export let map = await getMap(1);
 export let base = new Base(0, 0, units.boxHeight, units.boxWidth, 1000, 13);
 
+const backgroundImage = new Image();
+backgroundImage.src = map.mapimage;
+
 /**
  
 Max determines the number of enemies spawned
@@ -263,8 +266,14 @@ function drawTower() {
 function drawTiles() {
   for (const tile of tiles) {
     ctx.beginPath();
-    ctx.fillStyle = tile.color;
-    ctx.fillRect(tile.x, tile.y, tile.width, tile.height);
+    if (tile.tilebackground) {
+      const tileBackground = new Image();
+      tileBackground.src = tile.tilebackground;
+      ctx.drawImage(tileBackground, tile.x, tile.y, tile.width, tile.height);
+    } else {
+      ctx.fillStyle = tile.color;
+      ctx.fillRect(tile.x, tile.y, tile.width, tile.height);
+    }
     ctx.stroke();
   }
 }
@@ -340,7 +349,7 @@ function loadMap() {
           y: i * units.boxHeight,
           height: units.boxHeight,
           width: units.boxWidth,
-          color: 'white',
+          color: 'rgba(255, 255, 255, 0.2)',
           type: 0,
         });
       } else if (map.layout[count] == 10) {
@@ -359,6 +368,7 @@ function loadMap() {
           height: units.boxHeight,
           width: units.boxWidth,
           color: 'salmon',
+          tilebackground: map.tileimage,
           type: 11,
         });
       } else if (map.layout[count] == 12) {
@@ -377,6 +387,7 @@ function loadMap() {
           height: units.boxHeight,
           width: units.boxWidth,
           color: 'blue',
+          tilebackground: map.baseimage,
           type: 13,
         });
       }
@@ -622,6 +633,7 @@ function renderFrame() {
     requestAnimationFrame(renderFrame);
   } else if (state === 'game') {
     checkEnemies();
+    ctx.drawImage(backgroundImage, 0, 0, c.width, c.height);
     drawTiles();
     drawGridLayout();
     drawTower();
