@@ -422,7 +422,7 @@ c.addEventListener('click', (e) => {
           100,
           'tower',
           'lime',
-          100,
+          units.radius,
         ),
       );
       tiles[target.selected].type = 10;
@@ -541,7 +541,7 @@ function drawHoverBox(mouseX, mouseY) {
     ctx.arc(
       posX + units.boxWidth / 2,
       posY + units.boxHeight / 2,
-      100,
+      units.radius,
       0,
       2 * Math.PI,
     );

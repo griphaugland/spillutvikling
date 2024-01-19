@@ -16,6 +16,7 @@ export function calculateGameSize() {
     maxCanvasWidth: 600,
     lineLength: 12,
     multiplier: 1,
+    radius: 100,
   };
   if (screenSizeWidth > 1000 && screenSizeHeight > 900) {
     console.log('large');
@@ -24,6 +25,7 @@ export function calculateGameSize() {
     units.maxCanvasHeight = units.maxCanvasHeight * units.multiplier;
     units.boxWidth = units.boxWidth * units.multiplier;
     units.maxCanvasWidth = units.maxCanvasWidth * units.multiplier;
+    units.radius = units.radius * units.multiplier;
     return units;
   } else if (screenSizeWidth >= 600) {
     console.log('medium');
@@ -32,6 +34,7 @@ export function calculateGameSize() {
     units.maxCanvasHeight = units.maxCanvasHeight * units.multiplier;
     units.boxWidth = units.boxWidth * units.multiplier;
     units.maxCanvasWidth = units.maxCanvasWidth * units.multiplier;
+    units.radius = units.radius * units.multiplier;
     return units;
   } else if (screenSizeWidth <= 600) {
     console.log('small');
@@ -40,6 +43,7 @@ export function calculateGameSize() {
     units.maxCanvasHeight = units.maxCanvasHeight * units.multiplier;
     units.boxWidth = units.boxWidth * units.multiplier;
     units.maxCanvasWidth = units.maxCanvasWidth * units.multiplier;
+    units.radius = units.radius * units.multiplier;
     return units;
   }
 }
