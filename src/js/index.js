@@ -422,6 +422,7 @@ c.addEventListener('click', (e) => {
           100,
           'tower',
           'lime',
+          100,
         ),
       );
       tiles[target.selected].type = 10;
@@ -535,6 +536,16 @@ function drawHoverBox(mouseX, mouseY) {
   if (target.hit && tiles[target.selected].type == 0 && currency >= 100) {
     ctx.fillStyle = 'green';
     ctx.fillRect(posX, posY, units.boxWidth, units.boxHeight);
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(
+      posX + units.boxWidth / 2,
+      posY + units.boxHeight / 2,
+      100,
+      0,
+      2 * Math.PI,
+    );
+    ctx.stroke();
   } else {
     ctx.fillStyle = 'red';
     ctx.fillRect(posX, posY, units.boxWidth, units.boxHeight);

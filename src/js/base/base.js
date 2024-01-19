@@ -49,7 +49,7 @@ export class Enemy extends Base {
 }
 
 export class Tower {
-  constructor(posX, posY, width, height, dmg, type, color) {
+  constructor(posX, posY, width, height, dmg, type, color, radius) {
     this.posX = posX;
     this.posY = posY;
     this.height = height;
@@ -57,7 +57,7 @@ export class Tower {
     this.dmg = dmg;
     this.type = type;
     this.color = color;
-    this.radius = 100;
+    this.radius = radius;
     this.lastAttack = 0;
     this.attackSpeed = 10;
     this.price = 100;
