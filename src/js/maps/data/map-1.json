@@ -5,7 +5,7 @@
   "enemies": 20,
   "mapimage": "media/galaxy-bg.png",
   "tileimage": "media/tilebg-8.png",
-  "baseimage": "media/galaxy-base.png",
+  "baseimage": "media/earth-base.png",
   "towerimage1": "media/galaxy-spaceship.png",
   "layout": [
     0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0,
