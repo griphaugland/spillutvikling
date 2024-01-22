@@ -245,29 +245,27 @@ function moveEnemies() {
   }
 }
 
-const enemySprite = new Image();
-enemySprite.src = './media/DISK.png';
-const spriteWidth = 300;
-const spriteHeight = 300;
-let frameX = 0;
-let frameY = 0;
-const stagger = 30;
-let gameFrame = 0;
-
 function drawEnemy() {
   for (const enemy of enemies) {
+    const enemySprite = new Image();
+    enemySprite.src = './media/DISK.png';
+
     ctx.beginPath();
+    enemy.animation++;
+    const frameIndex = Math.floor(enemy.animation / 20) % 4;
+
     ctx.drawImage(
       enemySprite,
-      frameX * spriteWidth,
-      frameY * spriteHeight,
-      spriteWidth,
-      spriteHeight,
+      frameIndex * 300,
+      0,
+      300,
+      300,
       enemy.posX,
       enemy.posY,
-      units.boxWidth,
-      units.boxHeight,
+      enemy.width,
+      enemy.height,
     );
+    ctx.stroke();
   }
 }
 
@@ -669,11 +667,6 @@ function renderFrame() {
       drawHoverBox(mouseX, mouseY);
     }
     loopOverTowers();
-    if (gameFrame % stagger == 0) {
-      if (frameX < 3) frameX++;
-      else frameX = 0;
-    }
-    gameFrame++;
     requestAnimationFrame(renderFrame);
   }
 }
