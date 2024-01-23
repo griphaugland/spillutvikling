@@ -247,9 +247,24 @@ function moveEnemies() {
 
 function drawEnemy() {
   for (const enemy of enemies) {
+    const enemySprite = new Image();
+    enemySprite.src = './media/DISK.png';
+
     ctx.beginPath();
-    ctx.fillStyle = enemy.color;
-    ctx.fillRect(enemy.posX, enemy.posY, units.boxWidth, units.boxHeight);
+    enemy.animation++;
+    const frameIndex = Math.floor(enemy.animation / 20) % 4;
+
+    ctx.drawImage(
+      enemySprite,
+      frameIndex * 300,
+      0,
+      300,
+      300,
+      enemy.posX,
+      enemy.posY,
+      enemy.width,
+      enemy.height,
+    );
     ctx.stroke();
   }
 }

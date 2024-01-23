@@ -31,6 +31,7 @@ export class Enemy extends Base {
     this.value = value;
     this.direction = direction;
     this.boundedMove = this.move.bind(this);
+    this.animation = 0;
   }
 
   move() {
@@ -72,3 +73,18 @@ export class Tower {
 export function gameObjects(towers, enemies) {
   console.log(towers, enemies);
 }
+
+/* export class Sprite {
+  constructor(src, frmX, frmY, posX, posY, stagger) {
+    this.src = src;
+    this.frmX = frmX;
+    this.frmY = frmY;
+    this.spriteWidth = 300;
+    this.spriteHeight = 300;
+    this.posX = posX;
+    this.posY = posY;
+    this.stagger = stagger;
+    this.gameFrm = 0;
+    this.image = new Image();
+  }
+} */
