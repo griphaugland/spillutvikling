@@ -1,7 +1,7 @@
 import { calculateGameSize } from '../responsive/unitSystem.js';
 const units = calculateGameSize();
 
-class Base {
+export class Base {
   constructor(posX, posY, height, width, hp, type) {
     this.posX = posX;
     this.posY = posY;
@@ -13,12 +13,25 @@ class Base {
 }
 
 export class Enemy extends Base {
-  constructor(posX, posY, height, width, hp, type, dmg, color, direction) {
+  constructor(
+    posX,
+    posY,
+    height,
+    width,
+    hp,
+    type,
+    dmg,
+    color,
+    direction,
+    value,
+  ) {
     super(posX, posY, height, width, hp, type, color, direction);
     this.dmg = dmg;
     this.color = color;
+    this.value = value;
     this.direction = direction;
     this.boundedMove = this.move.bind(this);
+    this.animation = 0;
   }
 
   move() {
@@ -37,7 +50,7 @@ export class Enemy extends Base {
 }
 
 export class Tower {
-  constructor(posX, posY, width, height, dmg, type, color) {
+  constructor(posX, posY, width, height, dmg, type, color, radius) {
     this.posX = posX;
     this.posY = posY;
     this.height = height;
@@ -45,5 +58,33 @@ export class Tower {
     this.dmg = dmg;
     this.type = type;
     this.color = color;
+    this.radius = radius;
+    this.lastAttack = 0;
+    this.attackSpeed = 10;
+    this.price = 100;
+  }
+
+  isAttackValid() {
+    const value = this.test();
+    console.log(value);
   }
 }
+
+export function gameObjects(towers, enemies) {
+  console.log(towers, enemies);
+}
+
+/* export class Sprite {
+  constructor(src, frmX, frmY, posX, posY, stagger) {
+    this.src = src;
+    this.frmX = frmX;
+    this.frmY = frmY;
+    this.spriteWidth = 300;
+    this.spriteHeight = 300;
+    this.posX = posX;
+    this.posY = posY;
+    this.stagger = stagger;
+    this.gameFrm = 0;
+    this.image = new Image();
+  }
+} */

@@ -1,4 +1,6 @@
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   list-style: none;
   text-decoration: none;
@@ -6,10 +8,52 @@
   margin: 0;
 }
 
-
 body {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+}
+
+.scoreboard {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  font-size: 1.2rem;
+
+  #pause {
+    background-color: rgb(252, 252, 252);
+    border: 1px solid rgb(12, 12, 12);
+    padding: 12px 20px;
+    font-size: 1.2rem;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  #pause:hover {
+    background-color: rgb(242, 242, 242);
+  }
+}
+
+.game-over {
+  border: solid black 2px;
+  background-color: white;
+  padding: 30px;
+  border-radius: 0.5rem;
+}
+
+.game-overlay {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
 }

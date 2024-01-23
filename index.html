@@ -1,16 +1,25 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="./src/js/index.js" type="module"></script>
+    <link rel="stylesheet" href="/dist/css/styles.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Document</title>
-  <script src="./src/js/index.js" type="module"></script>
-<link rel="stylesheet" href="/dist/css/styles.css">
-</head>
-
-<body>
-  <canvas id="canvas"></canvas>
-</body>
-
+  <body>
+    <div id="container">
+      <div class="scoreboard">
+        <p id="currency">$500</p>
+        <p id="base">1000 hp</p>
+        <p id="remaining">0/5 enemies</p>
+        <button id="pause">Pause</button>
+      </div>
+      <canvas id="canvas"></canvas>
+      <div class="game-overlay">
+        <div><h1 class="game-over"></h1></div>
+      </div>
+    </div>
+  </body>
 </html>
