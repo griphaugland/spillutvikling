@@ -127,6 +127,23 @@ function checkTileLeft(enemy) {
   }
 }
 
+/**
+ * Sjekker tiles rundt enemy i prioritert rekkefølge basert på enemy sin retning.
+ *
+ * @function
+ * @param {Enemy} enemy Enemy-objektet som skal sjekkes.
+ * @returns {Object}  Et objekt som indikerer tilgjengeligheten til tilstøtende tiles.
+ *
+ * @description
+ * Denne funksjonen sjekker hver retning i en prioritert rekkefølge basert på fiendens nåværende retning.
+ * Hvis en tile er tilgjengelig i en bestemt retning, returnerer den et objekt med den tilsvarende retningen satt til true.
+ * Hvis ingen av retningene er tilgjengelige, returnerer den et objekt med alle retningene satt til false.
+ *
+ * @param {boolean} up - Indikerer om det er en tile over fienden.
+ * @param {boolean} down - Indikerer om det er en tile under fienden.
+ * @param {boolean} left - Indikerer om det er en tile til venstre for fienden.
+ * @param {boolean} right - Indikerer om det er en tile til høyre for fienden.
+ */
 function checkSurroundingTiles(enemy) {
   // Check each direction in a prioritized order
   if (enemy.direction !== 'down' && checkTileAbove(enemy)) {
@@ -188,6 +205,23 @@ function checkDirection(posX, posY, index) {
   return false;
 }
 
+/**
+ * Beveger fiender basert på nåværende retning og sjekker for hindringer.
+ *
+ * @function
+ * @returns {void}
+ *
+ * @description
+ * Denne funksjonen itererer gjennom hver enemy, sjekker nåværende retning og
+ * Prøver å bevege enemy i den retningen. Den bruker checkDirection-funksjonen til å
+ * bestemme om destinasjonen er blokkert. Hvis blokkert, utløser den en endring
+ * i retningen ved hjelp av changeDirection-funksjonen. Hvis ikke hindret, oppdaterer den enemy sin posisjon.
+ *
+ * @param {string} enemies[i].direction - The current direction of the enemy.
+ * @param {number} enemies[i].posX - The current X-coordinate of the enemy.
+ * @param {number} enemies[i].posY - The current Y-coordinate of the enemy.
+ * @param {number} i - The index of the current enemy in the 'enemies' array.
+ */
 function moveEnemies() {
   for (const i in enemies) {
     switch (enemies[i].direction) {
@@ -245,6 +279,25 @@ function moveEnemies() {
   }
 }
 
+/**
+ * Tegner enemies på canvas ved hjelp av sprites og animasjon.
+ *
+ * @function
+ * @returns {void}
+ *
+ * @description
+ * Denne funksjonen itererer gjennom hver enemy, lager et Image-objekt for enemy sprite,
+ * oppdaterer animasjonsrammen og tegner enemy på canvas ved hjelp av sprite og animasjon.
+ *
+ * @param {Enemy} enemy - Enemy-objektet som skal tegnes.
+ * @param {Image} enemySprite - Image-objektet som representerer fiendens sprite.
+ * @param {number} enemy.animation - Den nåværende animasjonsrammen for enemy.
+ * @param {number} frameIndex - Indeks for nåværende animasjonsramme basert på fiendens animasjon.
+ * @param {number} enemy.posX - X-koordinatet til fiendens posisjon på canvas.
+ * @param {number} enemy.posY - Y-koordinatet til fiendens posisjon på canvas.
+ * @param {number} enemy.width - Bredden på enemy sin sprite.
+ * @param {number} enemy.height - Høyden på enemy sin sprite.
+ */
 function drawEnemy() {
   for (const enemy of enemies) {
     const enemySprite = new Image();
@@ -598,6 +651,30 @@ function checkRadius(enemy, tower) {
   }
   return false;
 }
+/**
+ * Iterates over towers, checks if they can attack, and targets nearby enemies. Itrererer over towers, sjekker om de kan angripe, og sikter på nærliggende fiender.
+ *
+ * @function
+ * @returns {void}
+ *
+ * @description
+ * Denne funksjonen itererer gjennom hver tower, sjekker om det har gått nok tid siden forrige angrep.
+ * basert på towers angrepshastighet, og hvis det er tilfelle, itererer den gjennom hver enemy for å sjekke om de er innenfor
+ * tower sin angrepsradius. Hvis en fiende er innenfor radiusen, utløser den shoot-funksjonen, som oppdaterer
+ * enemy sin helse og initierer et angrep. lastAttack-telleren for tårnet blir deretter nullstilt.
+ *
+ * @param {Tower} tower - Tower-objectet som skal sjekkes og potensielt utløse et angrep.
+ * @param {number} tower.lastAttack - Tellern som representerer tiden siden forrige angrep.
+ * @param {number} tower.attackSpeed - Nedkjølingstiden som kreves mellom angrep.
+ * @param {Enemy} enemies[i] - Enemy-objektet som skal sjekkes for målretting.
+ * @param {boolean} checkRadius(enemies[i], tower) - Indikerer om fienden er innenfor tårnets angrepsradius.
+ * @param {number} tower.dmg - Skaden som påføres av tårnet ved angrep.
+ * @param {number} tower.posX - X-koordinatet til tårnets posisjon på lerretet.
+ * @param {number} tower.posY - Y-koordinatet til tårnets posisjon på lerretet.
+ * @param {number} tower.radius - Tårnets angrepsradius.
+ * @param {number} tower.width - Tårnets bredde.
+ * @param {number} tower.height -Tårnets høyde.
+ */
 function loopOverTowers() {
   for (const tower of towers) {
     if (tower.lastAttack > tower.attackSpeed) {
