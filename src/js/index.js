@@ -667,30 +667,7 @@ function checkRadius(enemy, tower) {
   }
   return false;
 }
-/**
- * Itrererer over towers, sjekker om de kan angripe, og sikter på nærliggende fiender. Itererer over towers, sjekker om de kan angripe, og sikter på nærliggende fiender.
- *
- * @function
- * @returns {void}
- *
- * @description
- * Denne funksjonen itererer gjennom hver tower, sjekker om det har gått nok tid siden forrige angrep.
- * basert på towers angrepshastighet, og hvis det er tilfelle, itererer den gjennom hver enemy for å sjekke om de er innenfor
- * tower sin angrepsradius. Hvis en fiende er innenfor radiusen, utløser den shoot-funksjonen, som oppdaterer
- * enemy sin helse og initierer et angrep. lastAttack-telleren for tårnet blir deretter nullstilt.
- *
- * @param {Tower} tower - Tower-objectet som skal sjekkes og potensielt utløse et angrep.
- * @param {number} tower.lastAttack - Tellern som representerer tiden siden forrige angrep.
- * @param {number} tower.attackSpeed - Nedkjølingstiden som kreves mellom angrep.
- * @param {Enemy} enemies[i] - Enemy-objektet som skal sjekkes for målretting.
- * @param {boolean} checkRadius(enemies[i], tower) - Indikerer om fienden er innenfor tårnets angrepsradius.
- * @param {number} tower.dmg - Skaden som påføres av tårnet ved angrep.
- * @param {number} tower.posX - X-koordinatet til tårnets posisjon på lerretet.
- * @param {number} tower.posY - Y-koordinatet til tårnets posisjon på lerretet.
- * @param {number} tower.radius - Tårnets angrepsradius.
- * @param {number} tower.width - Tårnets bredde.
- * @param {number} tower.height -Tårnets høyde.
- */
+
 /**
  * Itererer over towers, sjekker om de kan angripe, og sikter på nærliggende fiender.
  *
